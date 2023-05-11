@@ -13,9 +13,12 @@ const newsSlice = createSlice({
     searchNews(state, action) {
       state.news = [...state.news, ...action.payload.news];
     },
+    clearNews(state) {
+      state.news = [];
+    },
   },
 });
 
-export const { searchNews } = newsSlice.actions;
+export const { searchNews, clearNews } = newsSlice.actions;
 
 export default newsSlice.reducer;

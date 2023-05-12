@@ -1,30 +1,27 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import { INewsItem, INews } from 'renderer/types/news';
+import { INewsState } from 'renderer/store/newsSlice';
 import NewsItem from '../NewsItem/NewsItem';
 
 function NewsList() {
-  const news = useSelector((state: { news: INews }) => state.news.news);
-  return news.length ? (
-    news.map((src: INews) =>
-      src.items.map((item: INewsItem) => {
-        const id = uuidv4();
-        return (
-          <NewsItem
-            key={id}
-            id={id}
-            title={item.title}
-            body={item.body}
-            date={item.date}
-            source={src.title}
-          />
-        );
-      })
-    )
-  ) : (
-    <h2>News list empty</h2>
-  );
+  const news = useSelector((state: { news: INewsState }) => state.news.news);
+
+  if (!news.length) return <h2>News list empty</h2>;
+
+  return news.map((item) => {
+    const id = uuidv4();
+    return (
+      <NewsItem
+        key={id}
+        id={id}
+        title={item.title}
+        body={item.body}
+        isoDate={item.isoDate}
+        sourceName={item.sourceName}
+      />
+    );
+  });
 }
 
 export default NewsList;

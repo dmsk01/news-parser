@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { INewsItem } from 'renderer/types/news';
 
-export interface appState {
-  news: string[];
+export interface INewsState {
+  news: INewsItem[];
 }
 
-const initialState = { news: [] } as appState;
+const initialState = { news: [] } as INewsState;
 
 const newsSlice = createSlice({
   name: 'news',

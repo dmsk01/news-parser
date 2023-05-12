@@ -1,11 +1,11 @@
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { searchNews } from 'renderer/store/newsSlice';
+import { clearNews, searchNews } from 'renderer/store/newsSlice';
+import { INews, INewsItem } from 'renderer/types/news';
+import { useEffect } from 'react';
+import NewsItem from 'renderer/components/NewsItem/NewsItem';
 import NewsList from '../components/NewsList/NewsList';
 
-
-
-// const keyWords = ['крипта', 'процессор', 'nvidia', 'спектакль'];
 const rssSources = [
   'https://tass.ru/rss/v2.xml',
   'https://ria.ru/export/rss2/archive/index.xml',
@@ -18,7 +18,7 @@ const getRssFromSrc = (rssSource: string) => {
     .catch(console.log);
 };
 
-const isRssResponse = (sourceResponse: unknown): sourceResponse is IRss => {
+const isNewsResponse = (sourceResponse: unknown): sourceResponse is IRss => {
   if (!sourceResponse) return false;
   return (
     typeof sourceResponse === 'object' &&
@@ -27,18 +27,31 @@ const isRssResponse = (sourceResponse: unknown): sourceResponse is IRss => {
   );
 };
 
+function addSourceTitleToNewsItem({ items, title }: INews) {
+  return items.map((newsItem) => {
+    return { ...newsItem, sourceName: title };
+  });
+}
+
 const Search = () => {
   const dispatch = useDispatch();
 
   const handleClick = async () => {
     const requests: Promise<unknown>[] = [];
-    rssSources.forEach((rssSource) => {
+    rssSources.forEach((rssSource: string) => {
       requests.push(getRssFromSrc(rssSource));
     });
-    const news = await Promise.all(requests)
-      .then((response) => response.filter((resp) => isRssResponse(resp)))
+    const responses = await Promise.all(requests)
+      .then((response) => response.filter((resp) => isNewsResponse(resp)))
       .catch(console.log);
-    dispatch(searchNews({ news }));
+
+    if (Array.isArray(responses)) {
+      const news = responses.reduce((acc: INewsItem[], next) => {
+        acc.push(...addSourceTitleToNewsItem(next as INews));
+        return acc;
+      }, []);
+      dispatch(searchNews({ news }));
+    }
   };
 
   return (

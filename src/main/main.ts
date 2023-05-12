@@ -123,6 +123,8 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
+  mainWindow.webContents.openDevTools();
+
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();

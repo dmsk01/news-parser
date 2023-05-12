@@ -1,12 +1,7 @@
 import React from 'react';
+import { INewsItem } from 'renderer/types/news';
 
-export interface INewsItem {
-  title: string;
-  body: string;
-  source: string;
-  date: string;
-  id: string;
-}
+
 
 function NewsItem({ title, body, source, date, id }: INewsItem) {
   return (

@@ -1,15 +1,9 @@
-import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
 import { Link } from 'react-router-dom';
 import { searchNews } from 'renderer/store/newsSlice';
 import NewsList from '../components/NewsList/NewsList';
-import { INewsItem } from '../components/NewsItem/NewsItem';
 
-export interface IRss {
-  items: INewsItem[];
-  title: string;
-}
+
 
 // const keyWords = ['крипта', 'процессор', 'nvidia', 'спектакль'];
 const rssSources = [
@@ -34,7 +28,6 @@ const isRssResponse = (sourceResponse: unknown): sourceResponse is IRss => {
 };
 
 const Search = () => {
-  const [rss, setRss] = useState<IRss[]>([]);
   const dispatch = useDispatch();
 
   const handleClick = async () => {
@@ -48,19 +41,6 @@ const Search = () => {
     dispatch(searchNews({ news }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // rssSources.forEach(async (rssSource) => {
-    //   const result = await getRssFromSrc(rssSource);
-    //   if (isRssResponse(result)) {
-    //     setRss((prevNews) => [
-    //       ...prevNews,
-    //       { title: result.title, items: result.items },
-    //     ]);
-    //   }
-    // });
-  };
   return (
     <>
       <Link to="/settings" className="settings">
@@ -77,16 +57,6 @@ const Search = () => {
           />
         </svg>
       </Link>
-      {/* {rss.length &&
-        rss.map((rssObj) => {
-          return (
-            <NewsList
-              key={uuidv4()}
-              // news={rssObj.items}
-              // newsSource={rssObj.title}
-            />
-          );
-        })} */}
       <NewsList />
       <div className="search-block">
         <button onClick={handleClick} type="button" className="search-button">

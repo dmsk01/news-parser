@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 
 import { Provider, useDispatch } from 'react-redux';
 
@@ -17,13 +17,13 @@ function AppRouter() {
     dispatch(clearNews());
   }, []);
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route path="/" element={<Search />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Search />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 

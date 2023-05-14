@@ -12,9 +12,11 @@ import {
 import storage from 'redux-persist/lib/storage';
 
 import newsReducer from './newsSlice';
+import settingsReducer from './settingsSlice';
 
 const rootReducer = combineReducers({
   news: newsReducer,
+  settings: settingsReducer,
 });
 
 const persistConfig = {

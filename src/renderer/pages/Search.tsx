@@ -1,16 +1,16 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { clearNews, searchNews } from 'renderer/store/newsSlice';
 import { INews, INewsItem } from 'renderer/types/news';
-import { useEffect } from 'react';
 import NewsItem from 'renderer/components/NewsItem/NewsItem';
+import { ISettingsState } from 'renderer/store/settingsSlice';
 import NewsList from '../components/NewsList/NewsList';
 
-const rssSources = [
-  'https://tass.ru/rss/v2.xml',
-  'https://ria.ru/export/rss2/archive/index.xml',
-  'http://static.feed.rbc.ru/rbc/logical/footer/news.rss',
-];
+// const rssSources = [
+//   'https://tass.ru/rss/v2.xml',
+//   'https://ria.ru/export/rss2/archive/index.xml',
+//   'http://static.feed.rbc.ru/rbc/logical/footer/news.rss',
+// ];
 
 const getRssFromSrc = (rssSource: string) => {
   return window.electron.ipcRenderer
@@ -35,10 +35,13 @@ function addSourceTitleToNewsItem({ items, title }: INews) {
 
 const Search = () => {
   const dispatch = useDispatch();
+  const sources = useSelector(
+    (state: { settings: ISettingsState }) => state.settings.sources
+  );
 
   const handleClick = async () => {
     const requests: Promise<unknown>[] = [];
-    rssSources.forEach((rssSource: string) => {
+    sources.forEach((rssSource: string) => {
       requests.push(getRssFromSrc(rssSource));
     });
     const responses = await Promise.all(requests)

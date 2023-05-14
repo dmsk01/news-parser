@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AddForm from 'renderer/components/AddForm/AddForm';
 import NewsSources from 'renderer/components/NewsSources/NewsSources';
 
 const rssSources = [
@@ -12,7 +13,8 @@ function Settings() {
   return (
     <div>
       Settings page
-      <NewsSources sources={rssSources} />
+      <NewsSources />
+      <AddForm />
       <Link to="/" className="search">
         <svg
           xmlns="http://www.w3.org/2000/svg"

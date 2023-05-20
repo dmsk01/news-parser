@@ -9,19 +9,23 @@ function NewsList() {
 
   if (!news.length) return <h2>News list empty</h2>;
 
-  return news.map((item) => {
-    const id = uuidv4();
-    return (
-      <NewsItem
-        key={id}
-        id={id}
-        title={item.title}
-        body={item.body}
-        isoDate={item.isoDate}
-        sourceName={item.sourceName}
-      />
-    );
-  });
+  return (
+    <ul>
+      {news.map((item) => {
+        const id = uuidv4();
+        return (
+          <NewsItem
+            key={id}
+            id={id}
+            title={item.title}
+            body={item.body}
+            isoDate={item.isoDate}
+            sourceName={item.sourceName}
+          />
+        );
+      })}
+    </ul>
+  );
 }
 
 export default NewsList;

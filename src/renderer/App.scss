@@ -10,43 +10,12 @@
   padding: 0;
 }
 body {
-  position: relative;
-  color: white;
   height: 100vh;
-  background: linear-gradient(
-    90deg,
-    #fedc2a -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
-  );
   font-family: sans-serif;
   overflow-y: scroll;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 #root {
-  padding: 90px 20px;
-}
-
-button {
-  background-color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: none;
-  appearance: none;
-  font-size: 1.3rem;
-  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
-    0px 18px 88px -4px rgba(24, 39, 75, 0.14);
-  transition: all ease-in 0.1s;
-  cursor: pointer;
-  opacity: 0.9;
-}
-
-button:hover {
-  transform: scale(1.05);
-  opacity: 1;
 }
 
 li {
@@ -69,75 +38,7 @@ li {
   }
 }
 
-.search-block {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  background-color: #dd5789;
-  input {
-    flex: 1 1 auto;
-    border: 0;
-    padding: 5px 10px;
-    border-radius: 10px;
-    box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
-      0px 18px 88px -4px rgba(24, 39, 75, 0.14);
-  }
-}
-
-.settings {
-  position: absolute;
-  top: -80px;
-  left: 10px;
-}
-
-.search {
-  color: #fff;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  // svg {
-  //   width: 30px;
-  //   height: 30px;
-  // }
-}
-
 #root {
   width: 100%;
   height: 100%;
-}
-
-// Slide animation =====================
-
-.App {
-  position: relative;
-}
-
-.slide-enter,
-.slide-exit {
-  transition: transform 500ms ease-out;
-}
-
-.slide-enter {
-  transform: translateX(100%);
-}
-
-.slide-enter.slide-enter-active {
-  transform: translateX(0%);
-}
-
-.slide-exit {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  transform: translateX(0%);
-}
-
-.slide-exit-active {
-  transform: translateX(-100%);
 }

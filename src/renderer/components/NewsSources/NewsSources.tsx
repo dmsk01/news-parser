@@ -1,13 +1,10 @@
 import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
-import './style.scss';
 import { useSelector } from 'react-redux';
 import { ISettingsState } from 'renderer/store/settingsSlice';
 
-interface INewsSources {
-  sources: string[];
-}
+import { List, Typography, Button } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function NewsSources() {
   const sources = useSelector(
@@ -15,11 +12,36 @@ function NewsSources() {
   );
 
   return (
-    <ul className="news-sources">
-      {sources.map((src) => (
-        <li key={uuidv4()}>{src}</li>
-      ))}
-    </ul>
+    <List
+      header={<Typography.Title level={3}>Sources</Typography.Title>}
+      bordered
+      size="default"
+      style={{ height: '300px', overflowY: 'scroll' }}
+      dataSource={sources}
+      renderItem={(item) => (
+        <List.Item
+          actions={[
+            <Button
+              type="primary"
+              htmlType="button"
+              shape="circle"
+              key="list-item-edit"
+              icon={<EditOutlined rev="default" />}
+            />,
+            <Button
+              danger
+              type="primary"
+              htmlType="button"
+              shape="circle"
+              key="list-item-delete"
+              icon={<DeleteOutlined rev="default" />}
+            />,
+          ]}
+        >
+          <Typography.Text>{item}</Typography.Text>
+        </List.Item>
+      )}
+    />
   );
 }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AddForm from 'renderer/components/AddForm/AddForm';
-import AppLayout from 'renderer/components/AppLayout/AppLayout';
 import NewsSources from 'renderer/components/NewsSources/NewsSources';
 
 const rssSources = [

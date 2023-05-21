@@ -15,12 +15,20 @@ const settingsSlice = createSlice({
       state.sources.push(action.payload.source);
     },
     removeSource(state, action) {
-      const item = state.sources.findIndex((src) => src === action.payload.src);
-      state.sources.splice(item, 1);
+      const itemIndex = state.sources.findIndex(
+        (src) => src === action.payload.src
+      );
+      state.sources.splice(itemIndex, 1);
+    },
+    editSource(state, action) {
+      const itemIndex = state.sources.findIndex(
+        (src) => src === action.payload.src
+      );
+      state.sources.splice(itemIndex, 1, action.payload.newSrc);
     },
   },
 });
 
-export const { addSource, removeSource } = settingsSlice.actions;
+export const { addSource, removeSource, editSource } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

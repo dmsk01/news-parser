@@ -1,23 +1,16 @@
 import React, { useState } from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { useDispatch } from 'react-redux';
 import { addSource } from 'renderer/store/settingsSlice';
 
 function AddForm() {
-  const [formValue, setFormValue] = useState('');
+  const [form] = Form.useForm();
+  Form.useWatch('url', form);
   const dispatch = useDispatch();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    dispatch(addSource({ source: formValue }));
-  };
-
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setFormValue(e.currentTarget.value);
-  };
-
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const onFinish = (values: { url: string }) => {
+    dispatch(addSource({ source: values.url }));
+    form.resetFields();
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -26,12 +19,12 @@ function AddForm() {
 
   return (
     <Form
-      name="basic"
+      form={form}
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
+      style={{ maxWidth: 300 }}
       initialValues={{ remember: true }}
-      onFinish={handleSubmit}
+      onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
@@ -45,7 +38,7 @@ function AddForm() {
           },
         ]}
       >
-        <Input onChange={handleChange} />
+        <Input />
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

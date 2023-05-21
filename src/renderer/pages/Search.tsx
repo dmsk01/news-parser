@@ -2,9 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { clearNews, searchNews } from 'renderer/store/newsSlice';
 import { INews, INewsItem } from 'renderer/types/news';
-import NewsItem from 'renderer/components/NewsItem/NewsItem';
 import { ISettingsState } from 'renderer/store/settingsSlice';
-import AppLayout from 'renderer/components/AppLayout/AppLayout';
 import NewsList from '../components/NewsList/NewsList';
 
 // const rssSources = [

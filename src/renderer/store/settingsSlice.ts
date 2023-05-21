@@ -15,7 +15,8 @@ const settingsSlice = createSlice({
       state.sources.push(action.payload.source);
     },
     removeSource(state, action) {
-      state.sources.filter((src) => src !== action.payload.src);
+      const item = state.sources.findIndex((src) => src === action.payload.src);
+      state.sources.splice(item, 1);
     },
   },
 });

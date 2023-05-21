@@ -1,15 +1,20 @@
 import React from 'react';
 
-import { useSelector } from 'react-redux';
-import { ISettingsState } from 'renderer/store/settingsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { ISettingsState, removeSource } from 'renderer/store/settingsSlice';
 
 import { List, Typography, Button } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 function NewsSources() {
+  const dispatch = useDispatch();
   const sources = useSelector(
     (state: { settings: ISettingsState }) => state.settings.sources
   );
+
+  const handleDelete = (src: string) => {
+    dispatch(removeSource({ src }));
+  };
 
   return (
     <List
@@ -29,6 +34,7 @@ function NewsSources() {
               icon={<EditOutlined rev="default" />}
             />,
             <Button
+              onClick={() => handleDelete(item)}
               danger
               type="primary"
               htmlType="button"

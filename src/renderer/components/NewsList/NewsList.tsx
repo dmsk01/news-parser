@@ -21,6 +21,7 @@ function NewsList() {
             body={item.body}
             isoDate={item.isoDate}
             sourceName={item.sourceName}
+            details={item.details}
           />
         );
       })}

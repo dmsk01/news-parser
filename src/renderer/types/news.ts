@@ -4,7 +4,7 @@ export interface INewsItem {
   sourceName: string;
   isoDate: string;
   id: string;
-  link: string;
+  link?: string;
   details?: string;
 }
 

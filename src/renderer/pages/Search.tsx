@@ -18,7 +18,7 @@ function getRssDetails(src: string) {
     .invoke('get-details', src)
     .catch(console.log);
 }
-const isNewsResponse = (sourceResponse: unknown): sourceResponse is IRss => {
+const isNewsResponse = (sourceResponse: unknown): sourceResponse is INews => {
   if (!sourceResponse) return false;
   return (
     typeof sourceResponse === 'object' &&
@@ -71,6 +71,7 @@ const Search = () => {
       const fetchNewsDetais = async () => {
         const updatedData = await Promise.all(
           news.map(async (item) => {
+            if (!item.link) throw new Error('Link does not exist in news item');
             const response = await getRssDetails(item.link);
             const details = extractDetailsFromHTML(response as string);
             return { ...item, details };

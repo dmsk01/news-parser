@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import * as cheerio from 'cheerio';
 
 import { Button } from 'antd';
 import { clearNews, searchNews } from 'renderer/store/newsSlice';
@@ -34,10 +33,15 @@ function addSourceTitleToNewsItem({ items, title }: INews) {
   });
 }
 
-function getTextFromHtmlString(text: string) {
-  const $ = cheerio.load(text);
-  return $('p').text();
-}
+const extractDetailsFromHTML = (html: string) => {
+  let text = '';
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  doc.querySelectorAll('p').forEach((item) => {
+    text += item.innerText;
+  });
+  return text;
+};
 
 const Search = () => {
   const dispatch = useDispatch();
@@ -63,25 +67,22 @@ const Search = () => {
           return acc;
         }, [])
         .slice(0, 5);
-      // .map(async (item) => {
-      //   const details = await getRssDetails(item.link).then((data) =>
-      //     getTextFromHtmlString(data as string)
-      //   );
 
-      //   return { ...item, details };
-      // });
+      const fetchNewsDetais = async () => {
+        const updatedData = await Promise.all(
+          news.map(async (item) => {
+            const response = await getRssDetails(item.link);
+            const details = extractDetailsFromHTML(response as string);
+            return { ...item, details };
+          })
+        );
 
-      // const detailsRequests: Promise<any>[] = [];
-      // const temp = [...news];
+        return updatedData;
+      };
 
-      // temp.map((item) => {
-      //   return detailsRequests.push(getRssDetails(item.link));
-      // });
+      const newsWithDetails = await fetchNewsDetais();
 
-      // console.log(temp);
-      // const details = await Promise.all(detailsRequests);
-
-      dispatch(searchNews({ news }));
+      dispatch(searchNews({ news: newsWithDetails }));
     }
   };
 

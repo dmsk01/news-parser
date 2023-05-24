@@ -1,15 +1,12 @@
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import * as cheerio from 'cheerio';
+
+import { Button } from 'antd';
 import { clearNews, searchNews } from 'renderer/store/newsSlice';
 import { INews, INewsItem } from 'renderer/types/news';
 import { ISettingsState } from 'renderer/store/settingsSlice';
 import NewsList from '../components/NewsList/NewsList';
-
-// const rssSources = [
-//   'https://tass.ru/rss/v2.xml',
-//   'https://ria.ru/export/rss2/archive/index.xml',
-//   'http://static.feed.rbc.ru/rbc/logical/footer/news.rss',
-// ];
 
 const getRssFromSrc = (rssSource: string) => {
   return window.electron.ipcRenderer
@@ -17,6 +14,11 @@ const getRssFromSrc = (rssSource: string) => {
     .catch(console.log);
 };
 
+function getRssDetails(src: string) {
+  return window.electron.ipcRenderer
+    .invoke('get-details', src)
+    .catch(console.log);
+}
 const isNewsResponse = (sourceResponse: unknown): sourceResponse is IRss => {
   if (!sourceResponse) return false;
   return (
@@ -32,6 +34,11 @@ function addSourceTitleToNewsItem({ items, title }: INews) {
   });
 }
 
+function getTextFromHtmlString(text: string) {
+  const $ = cheerio.load(text);
+  return $('p').text();
+}
+
 const Search = () => {
   const dispatch = useDispatch();
   const sources = useSelector(
@@ -39,6 +46,8 @@ const Search = () => {
   );
 
   const handleClick = async () => {
+    dispatch(clearNews());
+
     const requests: Promise<unknown>[] = [];
     sources.forEach((rssSource: string) => {
       requests.push(getRssFromSrc(rssSource));
@@ -48,22 +57,47 @@ const Search = () => {
       .catch(console.log);
 
     if (Array.isArray(responses)) {
-      const news = responses.reduce((acc: INewsItem[], next) => {
-        acc.push(...addSourceTitleToNewsItem(next as INews));
-        return acc;
-      }, []);
+      const news = responses
+        .reduce((acc: INewsItem[], next) => {
+          acc.push(...addSourceTitleToNewsItem(next as INews));
+          return acc;
+        }, [])
+        .slice(0, 5);
+      // .map(async (item) => {
+      //   const details = await getRssDetails(item.link).then((data) =>
+      //     getTextFromHtmlString(data as string)
+      //   );
+
+      //   return { ...item, details };
+      // });
+
+      // const detailsRequests: Promise<any>[] = [];
+      // const temp = [...news];
+
+      // temp.map((item) => {
+      //   return detailsRequests.push(getRssDetails(item.link));
+      // });
+
+      // console.log(temp);
+      // const details = await Promise.all(detailsRequests);
+
       dispatch(searchNews({ news }));
     }
   };
 
   return (
     <>
+      <Button
+        style={{ background: '#001529', marginBottom: '24px' }}
+        onClick={handleClick}
+        htmlType="button"
+        type="primary"
+        className="search-button"
+        block
+      >
+        Search
+      </Button>
       <NewsList />
-      <div className="search-block">
-        <button onClick={handleClick} type="button" className="search-button">
-          Search
-        </button>
-      </div>
     </>
   );
 };

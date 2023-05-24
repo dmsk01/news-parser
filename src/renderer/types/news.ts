@@ -4,10 +4,11 @@ export interface INewsItem {
   sourceName: string;
   isoDate: string;
   id: string;
+  link: string;
+  details?: string;
 }
 
 export interface INews {
   items: INewsItem[];
   title: string;
-  link?: string;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -41,13 +41,16 @@ const items: MenuProps['items'] = [
 ];
 
 const AppLayout = ({ children }: IAppLayoutProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [pageName, setPageName] = useState<string>('');
+  const [collapsed, setCollapsed] = useState<boolean>(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const location = useLocation();
-  const page = capitalizeFirstLetter(location.pathname.substring(1));
+  useEffect(() => {
+    setPageName(capitalizeFirstLetter(location.pathname.substring(1)));
+  }, [location]);
 
   return (
     <Layout style={{ height: '100vh' }}>
@@ -75,15 +78,16 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
               }}
             />
             <Typography.Title style={{ padding: '0 24px' }}>
-              {page}
+              {pageName || 'Search'} page
             </Typography.Title>
           </Row>
         </Header>
         <Content
           style={{
-            margin: '24px 16px',
             padding: 24,
             minHeight: 280,
+            maxHeight: 'calc(100% - 64px)',
+            overflowY: 'scroll',
             background: colorBgContainer,
           }}
         >

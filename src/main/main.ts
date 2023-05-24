@@ -10,6 +10,7 @@
  */
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import axios from 'axios';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
@@ -42,6 +43,15 @@ ipcMain.on('ipc-example', async (event, arg) => {
 
 ipcMain.handle('get-news', async (event, searchQuery) => {
   const result = await parseRSS(searchQuery);
+  return result;
+});
+
+ipcMain.handle('get-details', async (event, searchQuery) => {
+  const result = await axios(searchQuery)
+    .then((response) => {
+      return response.data;
+    })
+    .catch(console.log);
   return result;
 });
 

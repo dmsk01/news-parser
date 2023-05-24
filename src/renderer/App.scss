@@ -10,9 +10,9 @@
   padding: 0;
 }
 body {
-  height: 100vh;
+  height: 100%;
   font-family: sans-serif;
-  overflow-y: scroll;
+  overflow: hidden;
 }
 
 #root {

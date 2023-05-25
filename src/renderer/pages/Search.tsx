@@ -2,7 +2,12 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button } from 'antd';
-import { clearNews, searchNews } from 'renderer/store/newsSlice';
+import {
+  clearNews,
+  searchNews,
+  fetchNews,
+  INewsState,
+} from 'renderer/store/newsSlice';
 import { INews, INewsItem } from 'renderer/types/news';
 import { ISettingsState } from 'renderer/store/settingsSlice';
 import NewsList from '../components/NewsList/NewsList';
@@ -48,43 +53,49 @@ const Search = () => {
   const sources = useSelector(
     (state: { settings: ISettingsState }) => state.settings.sources
   );
+  const { status, error } = useSelector(
+    (state: { news: INewsState }) => state.news
+  );
 
   const handleClick = async () => {
     dispatch(clearNews());
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    dispatch(fetchNews(sources));
 
-    const requests: Promise<unknown>[] = [];
-    sources.forEach((rssSource: string) => {
-      requests.push(getRssFromSrc(rssSource));
-    });
-    const responses = await Promise.all(requests)
-      .then((response) => response.filter((resp) => isNewsResponse(resp)))
-      .catch(console.log);
+    // const requests: Promise<unknown>[] = [];
+    // sources.forEach((rssSource: string) => {
+    //   requests.push(getRssFromSrc(rssSource));
+    // });
+    // const responses = await Promise.all(requests)
+    //   .then((response) => response.filter((resp) => isNewsResponse(resp)))
+    //   .catch(console.log);
 
-    if (Array.isArray(responses)) {
-      const news = responses
-        .reduce((acc: INewsItem[], next) => {
-          acc.push(...addSourceTitleToNewsItem(next as INews));
-          return acc;
-        }, [])
-        .slice(0, 5);
+    // if (Array.isArray(responses)) {
+    //   const news = responses
+    //     .reduce((acc: INewsItem[], next) => {
+    //       acc.push(...addSourceTitleToNewsItem(next as INews));
+    //       return acc;
+    //     }, [])
+    //     .slice(0, 5);
 
-      const fetchNewsDetais = async () => {
-        const updatedData = await Promise.all(
-          news.map(async (item) => {
-            if (!item.link) throw new Error('Link does not exist in news item');
-            const response = await getRssDetails(item.link);
-            const details = extractDetailsFromHTML(response as string);
-            return { ...item, details };
-          })
-        );
+    //   const fetchNewsDetais = async () => {
+    //     const updatedData = await Promise.all(
+    //       news.map(async (item) => {
+    //         if (!item.link) throw new Error('Link does not exist in news item');
+    //         const response = await getRssDetails(item.link);
+    //         const details = extractDetailsFromHTML(response as string);
+    //         return { ...item, details };
+    //       })
+    //     );
 
-        return updatedData;
-      };
+    //     return updatedData;
+    //   };
 
-      const newsWithDetails = await fetchNewsDetais();
+    //   const newsWithDetails = await fetchNewsDetais();
 
-      dispatch(searchNews({ news: newsWithDetails }));
-    }
+    //   dispatch(searchNews({ news: newsWithDetails }));
+    // }
   };
 
   return (
@@ -99,7 +110,9 @@ const Search = () => {
       >
         Search
       </Button>
-      <NewsList />
+      {status === 'loading' && <h2>Loading...</h2>}
+      {error && <h2>An error occured {error}</h2>}
+      {/* <NewsList /> */}
     </>
   );
 };

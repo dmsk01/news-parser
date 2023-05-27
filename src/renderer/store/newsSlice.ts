@@ -66,7 +66,7 @@ export const fetchNews = createAsyncThunk(
             acc.push(...addSourceTitleToNewsItem(next as INews));
             return acc;
           }, [])
-          .slice(0, 5);
+          .slice(0, 15);
 
         const fetchNewsDetais = async () => {
           const updatedData = await Promise.all(

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
-
 import { useDispatch } from 'react-redux';
 import { addSource } from 'renderer/store/settingsSlice';
 
-function AddForm() {
+interface IAddForm {
+  name: string;
+  label: string;
+}
+
+function AddForm({ name, label }: IAddForm) {
   const [form] = Form.useForm();
   Form.useWatch('url', form);
   const dispatch = useDispatch();
@@ -23,7 +26,6 @@ function AddForm() {
     <Form
       form={form}
       labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
       style={{ maxWidth: '100%' }}
       initialValues={{ remember: true }}
       onFinish={onFinish}
@@ -32,12 +34,12 @@ function AddForm() {
     >
       <div style={{ marginTop: '20px', display: 'flex', width: '100%' }}>
         <Form.Item
-          label="Rss URL"
-          name="url"
+          label={label}
+          name={name}
           rules={[
             {
               required: true,
-              message: 'Please enter your RSS address you would like to add',
+              message: 'Field must not be empty',
             },
           ]}
           style={{ flex: '1 1 auto', width: '100%' }}
@@ -45,13 +47,8 @@ function AddForm() {
           <Input />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ span: 18 }} style={{ marginLeft: '20px' }}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            key="add-rss"
-            icon={<PlusOutlined rev="default" />}
-          >
+        <Form.Item style={{ marginLeft: '20px' }}>
+          <Button type="primary" htmlType="submit">
             Add
           </Button>
         </Form.Item>

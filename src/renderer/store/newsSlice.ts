@@ -34,6 +34,12 @@ function addSourceTitleToNewsItem({ items, title }: INews) {
   });
 }
 
+const keyWords: string[] = ['Футбол', 'Турция', 'Выборы', 'Эрдоган'];
+
+function keyWordCheck(text: string) {
+  return keyWords.some((word) => text.includes(word));
+}
+
 const extractDetailsFromHTML = (html: string) => {
   let text = '';
   const parser = new DOMParser();
@@ -66,7 +72,7 @@ export const fetchNews = createAsyncThunk(
             acc.push(...addSourceTitleToNewsItem(next as INews));
             return acc;
           }, [])
-          .slice(0, 15);
+          .slice(0, 30);
 
         const fetchNewsDetais = async () => {
           const updatedData = await Promise.all(
@@ -83,7 +89,10 @@ export const fetchNews = createAsyncThunk(
         };
 
         const newsWithDetails = await fetchNewsDetais();
-        return newsWithDetails;
+        const newsWithKeywords = newsWithDetails.filter((item) =>
+          keyWordCheck(item.details)
+        );
+        return newsWithKeywords;
       }
     } catch (error) {
       return rejectWithValue(error.message);

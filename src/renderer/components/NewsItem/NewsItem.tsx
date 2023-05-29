@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Divider, Checkbox, Typography, Row } from 'antd';
 import { INewsItem } from 'renderer/types/news';
 
 const formatIsoDate = (isoDate: string) => {
@@ -22,18 +23,35 @@ function NewsItem({
   id,
   details,
 }: INewsItem) {
+  const [checked, setChecked] = useState(false);
+  const { Title, Text } = Typography;
   return (
     <li className="news-item">
-      <label htmlFor={id} className="news-item__heading">
-        <div className="news-item__info">
-          <h2 className="news-item__title">{title}</h2>
-          <p className="news-item__source">{sourceName}</p>
-          <time dateTime={isoDate}>{formatIsoDate(isoDate)}</time>
-          <p>{details}</p>
-        </div>
-        <input id={id} type="checkbox" className="news-item__title" />
+      <label htmlFor={id}>
+        <Row align="top">
+          <Checkbox
+            id={id}
+            type="checkbox"
+            style={{ marginTop: '5px', marginRight: '10px' }}
+          />
+          <Title level={3} style={{ marginBottom: '0px' }}>
+            {title}
+          </Title>
+        </Row>
+        <Row align="bottom" justify="start">
+          <Title
+            level={5}
+            className="news-item__source"
+            style={{ marginRight: '16px' }}
+          >
+            {sourceName}
+          </Title>
+          <Title level={5}>{formatIsoDate(isoDate)}</Title>
+        </Row>
+        <Text>{details}</Text>
       </label>
       <div className="news-item__body">{body}</div>
+      <Divider plain />
     </li>
   );
 }

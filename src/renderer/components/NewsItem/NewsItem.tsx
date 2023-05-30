@@ -28,13 +28,14 @@ function NewsItem({
   return (
     <li className="news-item">
       <label htmlFor={id}>
-        <Row align="top">
+        <Row align="top" wrap={false}>
           <Checkbox
             id={id}
+            className="news-item-checkbox"
             type="checkbox"
             style={{ marginTop: '5px', marginRight: '10px' }}
           />
-          <Title level={3} style={{ marginBottom: '0px' }}>
+          <Title level={4} style={{ marginBottom: '0px' }}>
             {title}
           </Title>
         </Row>

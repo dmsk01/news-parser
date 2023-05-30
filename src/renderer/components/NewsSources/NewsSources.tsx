@@ -11,7 +11,6 @@ function NewsSources() {
     (state: { settings: ISettingsState }) => state.settings.sources
   );
 
-
   return (
     <List
       header={<Typography.Title level={3}>Sources</Typography.Title>}

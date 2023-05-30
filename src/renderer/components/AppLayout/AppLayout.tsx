@@ -54,12 +54,15 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
 
   return (
     <Layout style={{ height: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider id="aside" trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu theme="dark" mode="inline" selectedKeys={['1']} items={items} />
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+        <Header
+          id="header"
+          style={{ padding: 0, background: colorBgContainer }}
+        >
           <Row justify="space-between" align="middle" gutter={16}>
             <Button
               type="text"

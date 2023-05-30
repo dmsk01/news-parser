@@ -19,6 +19,10 @@ function getRssDetails(src: string) {
     .catch(console.log);
 }
 
+const invokePrintNews = async () => {
+  return window.electron.ipcRenderer.invoke('print-digest').catch(console.log);
+};
+
 const isNewsResponse = (sourceResponse: unknown): sourceResponse is INews => {
   if (!sourceResponse) return false;
   return (
@@ -34,10 +38,20 @@ function addSourceTitleToNewsItem({ items, title }: INews) {
   });
 }
 
-const keyWords: string[] = ['Футбол', 'Турция', 'Выборы', 'Эрдоган'];
+const keyWords: string[] = [
+  'Футбол',
+  'Турция',
+  'Выборы',
+  'Эрдоган',
+  'Спорт',
+  'США',
+  'Год',
+];
 
 function keyWordCheck(text: string) {
-  return keyWords.some((word) => text.includes(word));
+  return keyWords.some((word) =>
+    text.toLowerCase().includes(word.toLowerCase())
+  );
 }
 
 const extractDetailsFromHTML = (html: string) => {
@@ -110,6 +124,9 @@ const newsSlice = createSlice({
     clearNews(state) {
       state.news = [];
     },
+    printNews() {
+      invokePrintNews();
+    },
   },
   extraReducers: {
     [fetchNews.pending]: (state) => {
@@ -127,6 +144,6 @@ const newsSlice = createSlice({
   },
 });
 
-export const { searchNews, clearNews } = newsSlice.actions;
+export const { searchNews, clearNews, printNews } = newsSlice.actions;
 
 export default newsSlice.reducer;

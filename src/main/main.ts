@@ -28,6 +28,20 @@ export default class AppUpdater {
   }
 }
 
+const options = {
+  silent: false,
+  printBackground: true,
+  color: false,
+  // margin: {
+  //   marginType: 'printableArea',
+  // },
+  landscape: false,
+  // pagesPerSheet: 1,
+  collate: false,
+  copies: 1,
+  pageSize: 'A4',
+};
+
 let mainWindow: BrowserWindow | null = null;
 
 const parseRSS = async (src: string) => {
@@ -53,6 +67,14 @@ ipcMain.handle('get-details', async (event, searchQuery) => {
     })
     .catch(console.log);
   return result;
+});
+
+ipcMain.handle('print-digest', () => {
+  if (!mainWindow) return;
+  mainWindow.webContents.print(options, (success, failureReason) => {
+    if (!success) console.log(failureReason);
+    console.log('Print Initiated');
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {

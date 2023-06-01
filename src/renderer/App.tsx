@@ -16,7 +16,7 @@ function AppRouter() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(clearNews());
-  }, []);
+  }, [dispatch]);
   return (
     <Routes>
       <Route path="/search" element={<Search />} />

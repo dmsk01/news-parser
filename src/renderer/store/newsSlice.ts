@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { log } from 'console';
 import { INews, INewsItem } from 'renderer/types/news';
 
 export interface INewsState {
@@ -19,8 +20,8 @@ function getRssDetails(src: string) {
     .catch(console.log);
 }
 
-const invokePrintNews = async () => {
-  return window.electron.ipcRenderer.invoke('print-digest').catch(console.log);
+const invokePrintNews = async (html: HTMLElement) => {
+  return window.electron.ipcRenderer.sendMessage('print-news', [html]);
 };
 
 const isNewsResponse = (sourceResponse: unknown): sourceResponse is INews => {
@@ -124,8 +125,8 @@ const newsSlice = createSlice({
     clearNews(state) {
       state.news = [];
     },
-    printNews() {
-      invokePrintNews();
+    printNews(state, action) {
+      invokePrintNews(action.payload.str);
     },
   },
   extraReducers: {

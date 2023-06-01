@@ -4,13 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { INewsState } from 'renderer/store/newsSlice';
 import NewsItem from '../NewsItem/NewsItem';
 
-function NewsList() {
+const NewsList = React.forwardRef((props, ref: any) => {
   const news = useSelector((state: { news: INewsState }) => state.news.news);
 
   if (!news.length) return <h2>News list empty</h2>;
 
   return (
-    <ul>
+    <ul ref={ref}>
       {news.map((item) => {
         const id = uuidv4();
         return (
@@ -27,6 +27,6 @@ function NewsList() {
       })}
     </ul>
   );
-}
+});
 
 export default NewsList;

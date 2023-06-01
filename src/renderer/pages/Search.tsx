@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button, Row } from 'antd';
@@ -11,7 +13,13 @@ import {
 import { ISettingsState } from 'renderer/store/settingsSlice';
 import NewsList from '../components/NewsList/NewsList';
 
+function componentToString(ref) {
+  // console.log(ref.innerText);
+  // return renderToStaticMarkup(ref);
+}
+
 const Search = () => {
+  const ref = useRef<HTMLElement>(null);
   const dispatch = useDispatch();
   const sources = useSelector(
     (state: { settings: ISettingsState }) => state.settings.sources
@@ -31,7 +39,9 @@ const Search = () => {
   };
 
   const handlePrint = () => {
-    dispatch(printNews());
+    // const str = componentToString(ref.current);
+
+    dispatch(printNews({ str: ref.current!.innerText }));
   };
 
   return (
@@ -67,7 +77,7 @@ const Search = () => {
       </Row>
       {status === 'loading' && <h2>Loading...</h2>}
       {error && <h2>An error occured {error}</h2>}
-      <NewsList />
+      <NewsList ref={ref} />
     </>
   );
 };

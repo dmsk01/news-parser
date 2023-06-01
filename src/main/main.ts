@@ -1,5 +1,4 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
-
 /**
  * This module executes inside of electron's main process. You can start
  * electron renderer process from here and communicate with the other processes
@@ -17,6 +16,11 @@ import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import Parser from 'rss-parser';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+
+const electron = require('electron');
+const fs = require('fs');
+// Importing dialog module using remote
+const { dialog } = electron;
 
 const parser = new Parser();
 
@@ -69,12 +73,50 @@ ipcMain.handle('get-details', async (event, searchQuery) => {
   return result;
 });
 
-ipcMain.handle('print-digest', () => {
-  if (!mainWindow) return;
-  mainWindow.webContents.print(options, (success, failureReason) => {
-    if (!success) console.log(failureReason);
-    console.log('Print Initiated');
-  });
+ipcMain.on('print-news', async (event, htmlString) => {
+  dialog
+    .showSaveDialog({
+      title: 'Select the File Path to save',
+      defaultPath: path.join(__dirname, '../assets/sample.docx'),
+      // defaultPath: path.join(__dirname, '../assets/'),
+      buttonLabel: 'Save',
+      // Restricting the user to only Text Files.
+      filters: [
+        {
+          name: 'Text Files',
+          extensions: ['txt', 'docx'],
+        },
+      ],
+      properties: [],
+    })
+    .then((file) => {
+      // Stating whether dialog operation was cancelled or not.
+      console.log(file.canceled);
+      if (!file.canceled && file.filePath) {
+        console.log(file.filePath.toString());
+        console.log(htmlString);
+        // Creating and Writing to the sample.txt file
+        fs.writeFile(
+          file.filePath.toString(),
+          htmlString[0],
+          function (err: Error) {
+            if (err) throw err;
+            console.log('Saved!');
+          }
+        );
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  // const win = BrowserWindow.getFocusedWindow();
+  // if (!mainWindow) return;
+  // mainWindow.webContents.print(options, (success, failureReason) => {
+  //   if (!success) console.log(failureReason);
+  //   console.log('Print Initiated');
+  // });
+  console.log('inside main handler');
 });
 
 if (process.env.NODE_ENV === 'production') {

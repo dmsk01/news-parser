@@ -77,25 +77,18 @@ ipcMain.on('print-news', async (event, htmlString) => {
   dialog
     .showSaveDialog({
       title: 'Select the File Path to save',
-      defaultPath: path.join(__dirname, '../assets/sample.docx'),
-      // defaultPath: path.join(__dirname, '../assets/'),
+      defaultPath: path.join(__dirname, '../assets/sample.doc'),
       buttonLabel: 'Save',
-      // Restricting the user to only Text Files.
       filters: [
         {
           name: 'Text Files',
-          extensions: ['txt', 'docx'],
+          extensions: ['txt', 'doc'],
         },
       ],
       properties: [],
     })
     .then((file) => {
-      // Stating whether dialog operation was cancelled or not.
-      console.log(file.canceled);
       if (!file.canceled && file.filePath) {
-        console.log(file.filePath.toString());
-        console.log(htmlString);
-        // Creating and Writing to the sample.txt file
         fs.writeFile(
           file.filePath.toString(),
           htmlString[0],

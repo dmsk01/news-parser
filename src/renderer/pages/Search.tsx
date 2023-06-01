@@ -1,6 +1,4 @@
 import React, { useRef } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
-import { findDOMNode } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Button, Row } from 'antd';
@@ -12,11 +10,6 @@ import {
 } from 'renderer/store/newsSlice';
 import { ISettingsState } from 'renderer/store/settingsSlice';
 import NewsList from '../components/NewsList/NewsList';
-
-function componentToString(ref) {
-  // console.log(ref.innerText);
-  // return renderToStaticMarkup(ref);
-}
 
 const Search = () => {
   const ref = useRef<HTMLElement>(null);
@@ -39,9 +32,28 @@ const Search = () => {
   };
 
   const handlePrint = () => {
-    // const str = componentToString(ref.current);
+    const list = ref.current;
+    if (!list) return;
+    // const content = list.innerHTML;
+    // const converted = htmlDocx.asBlob(content) as Blob;
+    // saveAs(converted, 'test.docx');
 
-    dispatch(printNews({ str: ref.current!.innerText }));
+    // console.log(
+    //   'static markup => ',
+    //   renderToStaticMarkup(ref.current.innerHTML as any)
+    // );
+
+    // const str = componentToString(ref.current);
+    list.querySelectorAll('li').forEach((li) => {
+      const input = li.querySelector('input');
+      const paragraph = li.querySelector('p');
+      if (input) {
+        if (!input?.checked) {
+          li.style.display = 'none';
+        }
+      }
+    });
+    dispatch(printNews({ str: list.innerText }));
   };
 
   return (

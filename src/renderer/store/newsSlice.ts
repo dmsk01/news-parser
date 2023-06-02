@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { log } from 'console';
 import { INews, INewsItem } from 'renderer/types/news';
 
 export interface INewsState {

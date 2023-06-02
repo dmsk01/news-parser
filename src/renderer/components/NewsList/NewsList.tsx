@@ -10,7 +10,7 @@ const NewsList = React.forwardRef((props, ref: any) => {
   if (!news.length) return <h2>News list empty</h2>;
 
   return (
-    <ul ref={ref} id="news-list">
+    <div className="portrait_A4_page" ref={ref} id="news-list">
       {news.map((item) => {
         const id = uuidv4();
         return (
@@ -25,7 +25,7 @@ const NewsList = React.forwardRef((props, ref: any) => {
           />
         );
       })}
-    </ul>
+    </div>
   );
 });
 

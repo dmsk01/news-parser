@@ -36,11 +36,11 @@ const Search = () => {
   const handlePrint = () => {
     const list = ref.current;
     if (!list) return;
-    list.querySelectorAll('li').forEach((li) => {
-      const input = li.querySelector('input');
+    list.querySelectorAll('.list-item').forEach((el) => {
+      const input = el.querySelector('input');
       if (input) {
-        if (!input?.checked) li.remove();
         input.remove();
+        if (!input?.checked) el.remove();
       }
     });
     Export2Word('news-list');

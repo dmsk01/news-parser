@@ -1,6 +1,9 @@
 export default function Export2Word(element, filename = '') {
-  const preHtml =
-    "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+  if (!document || !navigator) return;
+
+  const styles =
+    '<style>@page portrait_A4_page { size: 595.3pt 841.9pt; margin: 72pt 72pt 72pt 72pt; mso-header-margin: 35.4pt; mso-footer-margin: 35.4pt; mso-paper-source: 0; } div.portrait_A4_page { page: portrait_A4_page; } h4{margin-bottom:16px} span{margin-bottom:16px;display:inline-block} div.list-item{margin-bottom:60px}</style>';
+  const preHtml = `<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title>${styles}</head><body class='portrait_A4_page'>`;
   const postHtml = '</body></html>';
   const html = preHtml + document.getElementById(element).innerHTML + postHtml;
 
@@ -28,7 +31,7 @@ export default function Export2Word(element, filename = '') {
     downloadLink.href = url;
 
     // Setting the file name
-    downloadLink.download = `${filename}.doc`;
+    downloadLink.download = `${filenameToSave}.doc`;
 
     // triggering the function
     downloadLink.click();

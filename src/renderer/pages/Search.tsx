@@ -9,6 +9,8 @@ import {
   printNews,
 } from 'renderer/store/newsSlice';
 import { ISettingsState } from 'renderer/store/settingsSlice';
+import { Blob } from 'buffer';
+import Export2Word from 'renderer/utils/saveHtmlAsDoc';
 import NewsList from '../components/NewsList/NewsList';
 
 const Search = () => {
@@ -34,26 +36,16 @@ const Search = () => {
   const handlePrint = () => {
     const list = ref.current;
     if (!list) return;
-    // const content = list.innerHTML;
-    // const converted = htmlDocx.asBlob(content) as Blob;
-    // saveAs(converted, 'test.docx');
-
-    // console.log(
-    //   'static markup => ',
-    //   renderToStaticMarkup(ref.current.innerHTML as any)
-    // );
-
-    // const str = componentToString(ref.current);
     list.querySelectorAll('li').forEach((li) => {
       const input = li.querySelector('input');
-      const paragraph = li.querySelector('p');
       if (input) {
-        if (!input?.checked) {
-          li.style.display = 'none';
-        }
+        if (!input?.checked) li.remove();
+        input.remove();
       }
     });
-    dispatch(printNews({ str: list.innerText }));
+    Export2Word('news-list');
+
+    // dispatch(printNews({ str: list.innerText }));
   };
 
   return (

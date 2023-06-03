@@ -2,7 +2,7 @@ function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export capitalizeFirstLetter;
+export { capitalizeFirstLetter };
 
 export const extractDetailsFromHTML = (html: string) => {
   let text = '';

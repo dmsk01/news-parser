@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import AddForm from 'renderer/components/AddForm/AddForm';
-import NewsSources from 'renderer/components/NewsSources/NewsSources';
+import AddRssForm from 'renderer/components/AddRssForm/AddRssForm';
+import NewsFeed from 'renderer/components/NewsFeed/NewsFeed';
+import NewsSourcesList from 'renderer/components/NewsSourcesList/NewsSourcesList';
 
 const rssSources = [
   'https://tass.ru/rss/v2.xml',
@@ -11,10 +11,11 @@ const rssSources = [
 
 function Settings() {
   return (
-    <div>
-      <NewsSources />
-      <AddForm />
-    </div>
+    <>
+      <NewsFeed />
+      <NewsSourcesList />
+      <AddRssForm />
+    </>
   );
 }
 

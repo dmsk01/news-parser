@@ -9,19 +9,18 @@ import ListItem from './ListItem';
 
 interface IItemsList {
   title: 'sources' | 'keywords';
+  feed: string;
 }
 
-function ItemsList({ title }: IItemsList) {
+function ItemsList({ title, feed }: IItemsList) {
   const data = useSelector(
-    (state: { settings: ISettingsState }) => state.settings[title]
+    (state: { settings: ISettingsState }) => state.settings.feeds[feed][title]
   );
 
   return (
     <List
       header={
-        <Typography.Title level={3}>
-          {capitalizeFirstLetter(title)}
-        </Typography.Title>
+        <Typography.Title level={3}>{`${feed} ${title}`}</Typography.Title>
       }
       bordered
       size="default"

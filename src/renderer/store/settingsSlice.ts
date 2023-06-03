@@ -1,12 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+interface IFeedOption {
+  sources: string[];
+  keywords: string[];
+}
+
+interface IFeeds {
+  [K: string]: IFeedOption;
+}
+
 export interface ISettingsState {
   sources: string[];
   keywords: string[];
-  feeds: string[];
+  feeds: IFeeds;
+  currentFeed: string;
 }
 
-const initialState = { sources: [], keywords: [], feeds: [] } as ISettingsState;
+const initialState = {
+  sources: [],
+  keywords: [],
+  feeds: {},
+  currentFeed: '',
+} as ISettingsState;
 
 const settingsSlice = createSlice({
   name: 'settings',
@@ -26,18 +41,35 @@ const settingsSlice = createSlice({
       state.sources.splice(itemIndex, 1);
     },
     addFeed(state, action) {
-      console.log(action.payload.feed);
-      if (state.feeds.includes(action.payload.feed)) {
-        throw new Error('Feed already exists in the list');
-      } else {
-        state.feeds.push(action.payload.feed);
-      }
+      const { feed } = action.payload;
+      state.feeds = { ...state.feeds, [feed]: { sources: [], keywords: [] } };
+      // if (state.feeds.includes(action.payload.feed)) {
+      //   throw new Error('Feed already exists in the list');
+      // } else {
+      //   state.feeds.push(action.payload.feed);
+      // }
+      // state.feeds.push(action.payload.feed);
     },
     removeFeed(state, action) {
-      const itemIndex = state.feeds.findIndex(
-        (feed) => feed === action.payload.feed
-      );
-      state.feeds.splice(itemIndex, 1);
+      console.log('remove feed reducer');
+      // const itemIndex = state.feeds.findIndex(
+      //   (feed) => feed === action.payload.feed
+      // );
+      // state.feeds.splice(itemIndex, 1);
+    },
+    addKeyword(state, action) {
+      const { feed } = action.payload;
+      state.feeds = { ...state.feeds, [feed]: { sources: [], keywords: [] } };
+      // if (state.feeds.includes(action.payload.feed)) {
+      //   throw new Error('Feed already exists in the list');
+      // } else {
+      //   state.feeds.push(action.payload.feed);
+      // }
+      // state.feeds.push(action.payload.feed);
+    },
+    setCurrentFeed(state, action) {
+      const { currentFeed } = action.payload;
+      state.currentFeed = currentFeed;
     },
     editSource(state, action) {
       const itemIndex = state.sources.findIndex(
@@ -48,7 +80,14 @@ const settingsSlice = createSlice({
   },
 });
 
-export const { addSource, removeSource, editSource, addFeed, removeFeed } =
-  settingsSlice.actions;
+export const {
+  addSource,
+  removeSource,
+  editSource,
+  addFeed,
+  addKeyword,
+  setCurrentFeed,
+  removeFeed,
+} = settingsSlice.actions;
 
 export default settingsSlice.reducer;

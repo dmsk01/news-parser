@@ -1,6 +1,6 @@
 import React from 'react';
 import AddRssForm from 'renderer/components/AddRssForm/AddRssForm';
-import NewsFeed from 'renderer/components/NewsFeed/NewsFeed';
+import NewsFeeds from 'renderer/components/NewsFeeds/NewsFeeds';
 import NewsSourcesList from 'renderer/components/NewsSourcesList/NewsSourcesList';
 
 const rssSources = [
@@ -12,9 +12,7 @@ const rssSources = [
 function Settings() {
   return (
     <>
-      <NewsFeed />
-      <NewsSourcesList />
-      <AddRssForm />
+      <NewsFeeds />
     </>
   );
 }

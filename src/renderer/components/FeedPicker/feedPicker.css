@@ -1,0 +1,10 @@
+.radio-item:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.radio-item {
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

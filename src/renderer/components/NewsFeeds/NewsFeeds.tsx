@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Select } from 'antd';
 import {
+  IFeeds,
   ISettingsState,
   addFeed,
   setCurrentFeed,

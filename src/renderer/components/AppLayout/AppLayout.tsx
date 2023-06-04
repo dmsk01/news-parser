@@ -8,6 +8,7 @@ import {
 import { Layout, Row, Menu, Button, Typography, theme } from 'antd';
 import type { MenuProps } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
+import FeedPicker from '../FeedPicker/FeedPicker';
 
 const { Header, Sider, Content } = Layout;
 
@@ -41,13 +42,14 @@ const items: MenuProps['items'] = [
 ];
 
 const AppLayout = ({ children }: IAppLayoutProps) => {
-  const [pageName, setPageName] = useState<string>('');
+  const [pageName, setPageName] = useState<string>('search');
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const location = useLocation();
+
   useEffect(() => {
     setPageName(capitalizeFirstLetter(location.pathname.substring(1)));
   }, [location]);
@@ -57,6 +59,7 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
       <Sider id="aside" trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu theme="dark" mode="inline" selectedKeys={['1']} items={items} />
+        <FeedPicker />
       </Sider>
       <Layout>
         <Header

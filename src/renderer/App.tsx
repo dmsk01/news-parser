@@ -29,13 +29,13 @@ function AppRouter() {
 export default function App() {
   return (
     <div className="App">
-      <AppLayout>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <AppLayout>
             <AppRouter />
-          </PersistGate>
-        </Provider>
-      </AppLayout>
+          </AppLayout>
+        </PersistGate>
+      </Provider>
     </div>
   );
 }

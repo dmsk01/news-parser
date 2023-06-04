@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { useSelector } from 'react-redux';
 import { INews, INewsItem } from 'renderer/types/news';
+import { IFeedOption } from './settingsSlice';
 
 export interface INewsState {
   news: INewsItem[];
@@ -38,18 +40,8 @@ function addSourceTitleToNewsItem({ items, title }: INews) {
   });
 }
 
-const keyWords: string[] = [
-  'Футбол',
-  'Турция',
-  'Выборы',
-  'Эрдоган',
-  'Спорт',
-  'США',
-  'Год',
-];
-
-function keyWordCheck(text: string) {
-  return keyWords.some((word) =>
+function keyWordCheck(text: string, keywords: string[]) {
+  return keywords.some((word) =>
     text.toLowerCase().includes(word.toLowerCase())
   );
 }
@@ -68,7 +60,9 @@ const initialState = { news: [], status: null, error: null } as INewsState;
 
 export const fetchNews = createAsyncThunk(
   'news/fetchNews',
-  async function (sources: string[], { rejectWithValue }) {
+  async function (action: IFeedOption, { rejectWithValue }) {
+    const { sources, keywords } = action;
+
     try {
       const requests: Promise<unknown>[] = [];
 
@@ -104,7 +98,7 @@ export const fetchNews = createAsyncThunk(
 
         const newsWithDetails = await fetchNewsDetais();
         const newsWithKeywords = newsWithDetails.filter((item) =>
-          keyWordCheck(item.details)
+          keyWordCheck(item.details, keywords)
         );
         return newsWithKeywords;
       }

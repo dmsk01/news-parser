@@ -25,6 +25,7 @@ function FeedKeywords() {
 }
 
 function NewsFeed({ feeds }: IFeeds) {
+
   return Object.keys(feeds).length ? (
     <>
       <Divider />

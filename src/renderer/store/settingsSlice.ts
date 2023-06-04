@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-interface IFeedOption {
+export interface IFeedOption {
   sources: string[];
   keywords: string[];
 }
@@ -63,10 +63,6 @@ const settingsSlice = createSlice({
     },
     removeFeed(state, action) {
       console.log('remove feed reducer', action.payload);
-      // const itemIndex = state.feeds.findIndex(
-      //   (feed) => feed === action.payload.feed
-      // );
-      // state.feeds.splice(itemIndex, 1);
     },
     setCurrentFeed(state, action) {
       const { currentFeed } = action.payload;

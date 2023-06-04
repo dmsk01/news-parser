@@ -1,11 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {
-  ISettingsState,
-  addItem,
-  addKeyword,
-} from 'renderer/store/settingsSlice';
+import { ISettingsState, addListItem } from 'renderer/store/settingsSlice';
 import AddForm from '../AddForm/AddForm';
 
 function AddKeywordForm() {
@@ -15,14 +11,13 @@ function AddKeywordForm() {
   );
 
   const handleSubmit = (keyword: string) => {
-    dispatch(addKeyword({ keyword, feed }));
-    // dispatch(addItem({ keyword, feed, title: 'keywords' }));
+    dispatch(addListItem({ item: keyword, feed, title: 'keywords' }));
   };
   return (
     <AddForm
-      key="keyword"
+      key="keywords"
       label="Keyword"
-      name="keyword"
+      name="keywords"
       onSubmit={handleSubmit}
     />
   );

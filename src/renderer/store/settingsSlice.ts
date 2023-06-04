@@ -35,16 +35,9 @@ const settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
-    addSource(state, action) {
-      const { source, feed } = action.payload;
-      if (state.feeds[feed].sources.includes(action.payload.source)) {
-        throw new Error('Source already exists in the list');
-      } else {
-        state.feeds[feed].sources.push(source);
-      }
-    },
-    addItem(state, action) {
+    addListItem(state, action) {
       const { item, feed, title }: IListProps = action.payload;
+
       if (state.feeds[feed][title].includes(action.payload.item)) {
         throw new Error('Item already exists in the list');
       } else {
@@ -57,7 +50,7 @@ const settingsSlice = createSlice({
       if (itemIndex >= 0)
         state.feeds[feed][title].splice(itemIndex, 1, newValue);
     },
-    removeItem(state, action) {
+    removeListItem(state, action) {
       const { item, feed, title }: IListProps = action.payload;
       const itemIndex = state.feeds[feed][title].findIndex(
         (key) => key === item
@@ -75,14 +68,6 @@ const settingsSlice = createSlice({
       // );
       // state.feeds.splice(itemIndex, 1);
     },
-    addKeyword(state, action) {
-      const { keyword, feed } = action.payload;
-      if (state.feeds[feed].keywords.includes(action.payload.keyword)) {
-        throw new Error('Source already exists in the list');
-      } else {
-        state.feeds[feed].keywords.push(keyword);
-      }
-    },
     setCurrentFeed(state, action) {
       const { currentFeed } = action.payload;
       state.currentFeed = currentFeed;
@@ -91,12 +76,10 @@ const settingsSlice = createSlice({
 });
 
 export const {
-  addSource,
+  addListItem,
   editListItem,
-  addItem,
+  removeListItem,
   addFeed,
-  addKeyword,
-  removeItem,
   setCurrentFeed,
   removeFeed,
 } = settingsSlice.actions;

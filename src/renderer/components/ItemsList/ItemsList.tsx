@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   ISettingsState,
   editListItem,
-  removeItem,
-  removeSource,
+  removeListItem,
 } from 'renderer/store/settingsSlice';
 
 import { List, Typography } from 'antd';
@@ -25,7 +24,7 @@ function ItemsList({ title, feed }: IItemsList) {
   );
 
   const handleDelete = (item: string) => {
-    dispatch(removeItem({ item, feed, title }));
+    dispatch(removeListItem({ item, feed, title }));
   };
 
   const handleEdit = (item: string, newValue: string) => {

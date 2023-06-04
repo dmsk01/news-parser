@@ -16,7 +16,7 @@ function AddForm({ name, label, onSubmit }: IAddForm) {
     try {
       onSubmit(values[name].trim());
     } catch (err) {
-      console.log('err from catch', err);
+      console.log('Err from catch add form element', err);
     } finally {
       form.resetFields();
     }

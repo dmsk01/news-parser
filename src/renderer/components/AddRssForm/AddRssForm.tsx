@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ISettingsState, addSource } from 'renderer/store/settingsSlice';
+import { ISettingsState, addListItem } from 'renderer/store/settingsSlice';
 import AddForm from '../AddForm/AddForm';
 
 function AddRssForm() {
@@ -10,8 +10,7 @@ function AddRssForm() {
     (state: { settings: ISettingsState }) => state.settings.currentFeed
   );
   const handleSubmit = (source: string) => {
-    dispatch(addSource({ source, feed }));
-    // dispatch(addItem({ source, feed, title: 'sources' }));
+    dispatch(addListItem({ item: source, feed, title: 'sources' }));
   };
   return (
     <AddForm key="url" label="Rss URL" name="url" onSubmit={handleSubmit} />

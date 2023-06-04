@@ -1,13 +1,22 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { addKeyword } from 'renderer/store/settingsSlice';
+import {
+  ISettingsState,
+  addItem,
+  addKeyword,
+} from 'renderer/store/settingsSlice';
 import AddForm from '../AddForm/AddForm';
 
 function AddKeywordForm() {
   const dispatch = useDispatch();
-  const handleSubmit = (source: string) => {
-    dispatch(addKeyword({ source }));
+  const feed = useSelector(
+    (state: { settings: ISettingsState }) => state.settings.currentFeed
+  );
+
+  const handleSubmit = (keyword: string) => {
+    dispatch(addKeyword({ keyword, feed }));
+    // dispatch(addItem({ keyword, feed, title: 'keywords' }));
   };
   return (
     <AddForm

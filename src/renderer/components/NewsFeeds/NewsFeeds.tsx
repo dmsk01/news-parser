@@ -44,7 +44,7 @@ function NewsFeeds() {
           </Select>
         </Form.Item>
       </Form>
-      <NewsFeed />
+      <NewsFeed feeds={feeds} />
     </>
   );
 }

@@ -5,22 +5,30 @@ interface IFeedOption {
   keywords: string[];
 }
 
-interface IFeeds {
+export interface IFeeds {
   [K: string]: IFeedOption;
 }
 
+interface IListProps {
+  item: string;
+  newValue?: string | undefined;
+  feed: string;
+  title: 'sources' | 'keywords';
+}
+
 export interface ISettingsState {
-  sources: string[];
-  keywords: string[];
   feeds: IFeeds;
   currentFeed: string;
 }
 
 const initialState = {
-  sources: [],
-  keywords: [],
-  feeds: {},
-  currentFeed: '',
+  feeds: {
+    Default: {
+      sources: [],
+      keywords: [],
+    },
+  },
+  currentFeed: 'Default',
 } as ISettingsState;
 
 const settingsSlice = createSlice({
@@ -28,64 +36,67 @@ const settingsSlice = createSlice({
   initialState,
   reducers: {
     addSource(state, action) {
-      if (state.sources.includes(action.payload.source)) {
+      const { source, feed } = action.payload;
+      if (state.feeds[feed].sources.includes(action.payload.source)) {
         throw new Error('Source already exists in the list');
       } else {
-        state.sources.push(action.payload.source);
+        state.feeds[feed].sources.push(source);
       }
     },
-    removeSource(state, action) {
-      const itemIndex = state.sources.findIndex(
-        (src) => src === action.payload.src
+    addItem(state, action) {
+      const { item, feed, title }: IListProps = action.payload;
+      if (state.feeds[feed][title].includes(action.payload.item)) {
+        throw new Error('Item already exists in the list');
+      } else {
+        state.feeds[feed][title].push(item);
+      }
+    },
+    editListItem(state, action) {
+      const { item, newValue = '', feed, title }: IListProps = action.payload;
+      const itemIndex = state.feeds[feed].sources.findIndex((i) => i === item);
+      if (itemIndex >= 0)
+        state.feeds[feed][title].splice(itemIndex, 1, newValue);
+    },
+    removeItem(state, action) {
+      const { item, feed, title }: IListProps = action.payload;
+      const itemIndex = state.feeds[feed][title].findIndex(
+        (key) => key === item
       );
-      state.sources.splice(itemIndex, 1);
+      if (itemIndex >= 0) state.feeds[feed][title].splice(itemIndex, 1);
     },
     addFeed(state, action) {
       const { feed } = action.payload;
       state.feeds = { ...state.feeds, [feed]: { sources: [], keywords: [] } };
-      // if (state.feeds.includes(action.payload.feed)) {
-      //   throw new Error('Feed already exists in the list');
-      // } else {
-      //   state.feeds.push(action.payload.feed);
-      // }
-      // state.feeds.push(action.payload.feed);
     },
     removeFeed(state, action) {
-      console.log('remove feed reducer');
+      console.log('remove feed reducer', action.payload);
       // const itemIndex = state.feeds.findIndex(
       //   (feed) => feed === action.payload.feed
       // );
       // state.feeds.splice(itemIndex, 1);
     },
     addKeyword(state, action) {
-      const { feed } = action.payload;
-      state.feeds = { ...state.feeds, [feed]: { sources: [], keywords: [] } };
-      // if (state.feeds.includes(action.payload.feed)) {
-      //   throw new Error('Feed already exists in the list');
-      // } else {
-      //   state.feeds.push(action.payload.feed);
-      // }
-      // state.feeds.push(action.payload.feed);
+      const { keyword, feed } = action.payload;
+      if (state.feeds[feed].keywords.includes(action.payload.keyword)) {
+        throw new Error('Source already exists in the list');
+      } else {
+        state.feeds[feed].keywords.push(keyword);
+      }
     },
     setCurrentFeed(state, action) {
       const { currentFeed } = action.payload;
       state.currentFeed = currentFeed;
-    },
-    editSource(state, action) {
-      const itemIndex = state.sources.findIndex(
-        (src) => src === action.payload.src
-      );
-      state.sources.splice(itemIndex, 1, action.payload.newSrc);
     },
   },
 });
 
 export const {
   addSource,
-  removeSource,
-  editSource,
+  editListItem,
+  addItem,
   addFeed,
   addKeyword,
+  removeItem,
   setCurrentFeed,
   removeFeed,
 } = settingsSlice.actions;

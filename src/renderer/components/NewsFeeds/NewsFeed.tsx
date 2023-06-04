@@ -1,5 +1,6 @@
 import React from 'react';
 import { Divider } from 'antd';
+import { IFeeds } from 'renderer/store/settingsSlice';
 import NewsSourcesList from '../NewsSourcesList/NewsSourcesList';
 import AddRssForm from '../AddRssForm/AddRssForm';
 import AddKeywordForm from '../AddKeywordForm/AddKeywordForm';
@@ -17,24 +18,26 @@ function FeedSources() {
 function FeedKeywords() {
   return (
     <>
-      {/* <NewsKeywordList />
-      <AddKeywordForm /> */}
+      <NewsKeywordList />
+      <AddKeywordForm />
     </>
   );
 }
 
-function NewsFeed() {
-  return (
+function NewsFeed({ feeds }: IFeeds) {
+  return Object.keys(feeds).length ? (
     <>
       <Divider />
       <div style={{ marginBottom: '20px' }}>
         <FeedSources />
       </div>
       <Divider />
-      {/* <div>
+      <div>
         <FeedKeywords />
-      </div> */}
+      </div>
     </>
+  ) : (
+    <h4>Feeds not found</h4>
   );
 }
 

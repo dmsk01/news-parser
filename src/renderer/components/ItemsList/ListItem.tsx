@@ -4,15 +4,19 @@ import { removeSource, editSource } from 'renderer/store/settingsSlice';
 import { List, Button, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
-function ListItem({ item }: { item: string }) {
-  const dispatch = useDispatch();
+interface IListItem {
+  item: string;
+  onDelete: (feed: string) => void;
+  onEdit: (item: string, newValue: string) => void;
+}
 
+function ListItem({ item, onDelete, onEdit }: IListItem) {
   const handleDelete = (src: string) => {
-    dispatch(removeSource({ src }));
+    onDelete(src);
   };
 
-  const handleEdit = (editedSrc: string) => {
-    dispatch(editSource({ src: item, newSrc: editedSrc }));
+  const handleEdit = (newValue: string) => {
+    onEdit(item, newValue);
   };
   return (
     <List.Item

@@ -9,6 +9,26 @@
   text-overflow: ellipsis;
 }
 
+.ant-layout-sider-collapsed.ant-layout-sider {
+  flex: 0 0 100px !important;
+  max-width: 100px !important;
+  min-width: 100px !important;
+  width: 100px !important;
+}
+
 .ant-layout-sider-collapsed .feed-title {
   font-size: 14px;
+  text-align: center;
+}
+
+.ant-layout-sider-collapsed #radio-group {
+  padding: 0 5px !important;
+}
+
+.ant-layout-sider-collapsed .ant-radio + span {
+  font-size: 10px;
+  padding: 0 7px !important;
+  max-width: 50px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }

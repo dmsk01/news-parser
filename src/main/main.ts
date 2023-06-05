@@ -32,20 +32,6 @@ export default class AppUpdater {
   }
 }
 
-const options = {
-  silent: false,
-  printBackground: true,
-  color: false,
-  // margin: {
-  //   marginType: 'printableArea',
-  // },
-  landscape: false,
-  // pagesPerSheet: 1,
-  collate: false,
-  copies: 1,
-  pageSize: 'A4',
-};
-
 let mainWindow: BrowserWindow | null = null;
 
 const parseRSS = async (src: string) => {
@@ -73,44 +59,58 @@ ipcMain.handle('get-details', async (event, searchQuery) => {
   return result;
 });
 
-ipcMain.on('print-news', async (event, htmlString) => {
-  dialog
-    .showSaveDialog({
-      title: 'Select the File Path to save',
-      defaultPath: path.join(__dirname, '../assets/sample.doc'),
-      buttonLabel: 'Save',
-      filters: [
-        {
-          name: 'Text Files',
-          extensions: ['txt', 'doc'],
-        },
-      ],
-      properties: [],
-    })
-    .then((file) => {
-      if (!file.canceled && file.filePath) {
-        fs.writeFile(
-          file.filePath.toString(),
-          htmlString[0],
-          function (err: Error) {
-            if (err) throw err;
-            console.log('Saved!');
-          }
-        );
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+// const options = {
+//   silent: false,
+//   printBackground: true,
+//   color: false,
+//   // margin: {
+//   //   marginType: 'printableArea',
+//   // },
+//   landscape: false,
+//   // pagesPerSheet: 1,
+//   collate: false,
+//   copies: 1,
+//   pageSize: 'A4',
+// };
 
-  // const win = BrowserWindow.getFocusedWindow();
-  // if (!mainWindow) return;
-  // mainWindow.webContents.print(options, (success, failureReason) => {
-  //   if (!success) console.log(failureReason);
-  //   console.log('Print Initiated');
-  // });
-  console.log('inside main handler');
-});
+// ipcMain.on('print-news', async (event, htmlString) => {
+//   dialog
+//     .showSaveDialog({
+//       title: 'Select the File Path to save',
+//       defaultPath: path.join(__dirname, '../assets/sample.doc'),
+//       buttonLabel: 'Save',
+//       filters: [
+//         {
+//           name: 'Text Files',
+//           extensions: ['txt', 'doc'],
+//         },
+//       ],
+//       properties: [],
+//     })
+//     .then((file) => {
+//       if (!file.canceled && file.filePath) {
+//         fs.writeFile(
+//           file.filePath.toString(),
+//           htmlString[0],
+//           function (err: Error) {
+//             if (err) throw err;
+//             console.log('Saved!');
+//           }
+//         );
+//       }
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+
+//   // const win = BrowserWindow.getFocusedWindow();
+//   // if (!mainWindow) return;
+//   // mainWindow.webContents.print(options, (success, failureReason) => {
+//   //   if (!success) console.log(failureReason);
+//   //   console.log('Print Initiated');
+//   // });
+//   console.log('inside main handler');
+// });
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

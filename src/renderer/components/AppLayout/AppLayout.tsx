@@ -43,7 +43,7 @@ const items: MenuProps['items'] = [
 ];
 
 const AppLayout = ({ children }: IAppLayoutProps) => {
-  const [pageName, setPageName] = useState<string>('search');
+  const [pageName, setPageName] = useState<string>('Search');
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const {
     token: { colorBgContainer },
@@ -60,7 +60,7 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
       <Sider id="aside" trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu theme="dark" mode="inline" selectedKeys={['1']} items={items} />
-        {pageName === 'Search' && <FeedPicker />}
+        {pageName === 'Settings' ? null : <FeedPicker />}
       </Sider>
       <Layout>
         <Header
@@ -84,7 +84,7 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
                 height: 64,
               }}
             />
-            {pageName === 'Search' && <SearchHeader />}
+            {pageName === 'Settings' ? null : <SearchHeader />}
             <Typography.Title style={{ padding: '0 24px', margin: '0' }}>
               {pageName || 'Search'} page
             </Typography.Title>

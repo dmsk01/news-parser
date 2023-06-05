@@ -11,15 +11,12 @@ export default function Export2Word(element, filename = '') {
     type: 'application/msword',
   });
 
-  // Specify link url
   const url = `data:application/vnd.ms-word;charset=utf-8,${encodeURIComponent(
     html
   )}`;
 
-  // Specify file name
-  const filenameToSave = filename || 'document.doc';
+  const filenameToSave = filename || 'document';
 
-  // Create download link element
   const downloadLink = document.createElement('a');
 
   document.body.appendChild(downloadLink);
@@ -27,13 +24,8 @@ export default function Export2Word(element, filename = '') {
   if (navigator.msSaveOrOpenBlob) {
     navigator.msSaveOrOpenBlob(blob, filenameToSave);
   } else {
-    // Create a link to the file
     downloadLink.href = url;
-
-    // Setting the file name
     downloadLink.download = `${filenameToSave}.doc`;
-
-    // triggering the function
     downloadLink.click();
   }
 

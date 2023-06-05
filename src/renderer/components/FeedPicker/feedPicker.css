@@ -8,3 +8,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+.ant-layout-sider-collapsed .feed-title {
+  font-size: 14px;
+}

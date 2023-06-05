@@ -22,6 +22,7 @@ function FeedPicker() {
       <Typography.Title
         style={{ color: '#fefefe', padding: '0 20px', marginTop: '30px' }}
         level={4}
+        className="feed-title"
       >
         Feeds
       </Typography.Title>

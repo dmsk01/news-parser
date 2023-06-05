@@ -9,6 +9,7 @@ import { Layout, Row, Menu, Button, Typography, theme } from 'antd';
 import type { MenuProps } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import FeedPicker from '../FeedPicker/FeedPicker';
+import SearchHeader from '../SearchHeader/SearchHeader';
 
 const { Header, Sider, Content } = Layout;
 
@@ -59,7 +60,7 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
       <Sider id="aside" trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
         <Menu theme="dark" mode="inline" selectedKeys={['1']} items={items} />
-        <FeedPicker />
+        {pageName === 'Search' && <FeedPicker />}
       </Sider>
       <Layout>
         <Header
@@ -83,7 +84,8 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
                 height: 64,
               }}
             />
-            <Typography.Title style={{ padding: '0 24px' }}>
+            {pageName === 'Search' && <SearchHeader />}
+            <Typography.Title style={{ padding: '0 24px', margin: '0' }}>
               {pageName || 'Search'} page
             </Typography.Title>
           </Row>

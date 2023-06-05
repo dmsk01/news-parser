@@ -1,84 +1,19 @@
-import React, { useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
-import { Button, Row } from 'antd';
-import { clearNews, fetchNews, INewsState } from 'renderer/store/newsSlice';
-import { ISettingsState } from 'renderer/store/settingsSlice';
-import Export2Word from 'renderer/utils/saveHtmlAsDoc';
-import NewsList from '../components/NewsList/NewsList';
+import { INewsState } from 'renderer/store/newsSlice';
 
 const Search = () => {
-  const ref = useRef<HTMLElement>(null);
-  const dispatch = useDispatch();
-  const currentFeed = useSelector(
-    (state: { settings: ISettingsState }) => state.settings.currentFeed
-  );
-
-  const { sources, keywords } = useSelector(
-    (state: { settings: ISettingsState }) => state.settings.feeds[currentFeed]
-  );
-
   const { status, error } = useSelector(
     (state: { news: INewsState }) => state.news
   );
 
-  const handleSearch = async () => {
-    dispatch(clearNews());
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    dispatch(fetchNews({ sources, keywords }));
-  };
-  const handleClear = async () => {
-    dispatch(clearNews());
-  };
-
-  const handlePrint = () => {
-    const list = ref.current;
-    if (!list) return;
-    list.querySelectorAll('.list-item').forEach((el) => {
-      const input = el.querySelector('input');
-      if (input) {
-        input.remove();
-        if (!input?.checked) el.remove();
-      }
-    });
-    Export2Word('news-list');
-  };
-
   return (
     <>
-      <Row style={{ marginBottom: '24px' }}>
-        <Button
-          id="search-button"
-          style={{ background: '#001529', marginRight: '24px' }}
-          onClick={handleSearch}
-          htmlType="button"
-          type="primary"
-        >
-          Search
-        </Button>
-        <Button
-          id="print-button"
-          style={{ background: '#001529', marginRight: '24px' }}
-          onClick={handlePrint}
-          htmlType="button"
-          type="primary"
-        >
-          Print digest
-        </Button>
-        <Button
-          id="clear-button"
-          style={{ background: '#001529', marginBottom: '24px' }}
-          onClick={handleClear}
-          htmlType="button"
-          type="primary"
-        >
-          Clear digest
-        </Button>
-      </Row>
       {status === 'loading' && <h2>Loading...</h2>}
       {error && <h2>An error occured {error}</h2>}
-      <NewsList ref={ref} />
+
+      <div id="news-list-portal" />
     </>
   );
 };

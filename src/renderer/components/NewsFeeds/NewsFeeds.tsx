@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Select } from 'antd';
 import {
-  IFeeds,
   ISettingsState,
   addFeed,
   setCurrentFeed,
@@ -14,14 +13,15 @@ import NewsFeed from './NewsFeed';
 function NewsFeeds() {
   const dispatch = useDispatch();
 
-  const feeds = useSelector(
+  const feedsObj = useSelector(
     (state: { settings: ISettingsState }) => state.settings.feeds
   );
-  const [selected, setSelected] = useState(Object.keys(feeds)[0]);
+  const currentFeed = useSelector(
+    (state: { settings: ISettingsState }) => state.settings.currentFeed
+  );
 
-  useEffect(() => {
-    dispatch(setCurrentFeed({ currentFeed: selected }));
-  }, [selected, dispatch]);
+  const feeds = Object.keys(feedsObj);
+  if (!feeds) return null;
 
   const handleSubmit = (feed: string) => {
     dispatch(addFeed({ feed }));
@@ -29,23 +29,23 @@ function NewsFeeds() {
 
   const handleChange = (value: string) => {
     dispatch(setCurrentFeed({ currentFeed: value }));
-    setSelected(value);
   };
   return (
     <>
       <AddForm name="feed" label="Add feed" onSubmit={handleSubmit} />
       <Form>
         <Form.Item label="Feeds">
-          <Select onChange={(value) => handleChange(value)} value={selected}>
-            {Object.keys(feeds).map((feed) => (
-              <Select.Option key={feed} value={feed}>
-                {capitalizeFirstLetter(feed)}
-              </Select.Option>
-            ))}
+          <Select onChange={(value) => handleChange(value)} value={currentFeed}>
+            {feeds &&
+              feeds.map((feed) => (
+                <Select.Option key={feed} value={feed}>
+                  {capitalizeFirstLetter(feed)}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
       </Form>
-      <NewsFeed feeds={feeds} />
+      <NewsFeed feeds={feedsObj} />
     </>
   );
 }

@@ -25,6 +25,11 @@
   padding: 0 5px !important;
 }
 
+.ant-radio + span {
+  max-width: 140px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
 .ant-layout-sider-collapsed .ant-radio + span {
   font-size: 10px;
   padding: 0 7px !important;

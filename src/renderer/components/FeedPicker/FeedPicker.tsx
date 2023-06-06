@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, Radio, Typography } from 'antd';
 import './feedPicker.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,11 +11,15 @@ function FeedPicker() {
   const feedsObj = useSelector(
     (state: { settings: ISettingsState }) => state.settings.feeds
   );
+  const currentFeed = useSelector(
+    (state: { settings: ISettingsState }) => state.settings.currentFeed
+  );
+
   const feeds = Object.keys(feedsObj);
-  const [selected, setSelected] = useState(Object.keys(feeds)[0]);
-  const handleChange = (event: any) => {
+  if (!feeds) return null;
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(setCurrentFeed({ currentFeed: event.target.value }));
-    setSelected(event.target);
   };
   return (
     <>
@@ -29,23 +33,27 @@ function FeedPicker() {
       <Form
         style={{ background: '#fefefe', padding: '20px 0', color: 'white' }}
       >
-        <Form.Item name="radio-group" style={{ margin: 0 }}>
-          <Radio.Group
-            value={selected}
-            onChange={(value) => handleChange(value)}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '0 25px',
-            }}
-          >
-            {feeds.length &&
-              feeds.map((feed) => (
-                <Radio key={feed} value={feed} className="radio-item">
-                  {capitalizeFirstLetter(feed)}
-                </Radio>
-              ))}
-          </Radio.Group>
+        <Form.Item
+          name="radio-group"
+          style={{
+            margin: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '0 25px',
+          }}
+        >
+          {feeds.length &&
+            feeds.map((feed) => (
+              <Radio
+                onChange={handleChange}
+                key={feed}
+                value={feed}
+                className="radio-item"
+                checked={feed === currentFeed}
+              >
+                {capitalizeFirstLetter(feed)}
+              </Radio>
+            ))}
         </Form.Item>
       </Form>
     </>

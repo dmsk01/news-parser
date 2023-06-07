@@ -8,17 +8,14 @@ import { capitalizeFirstLetter } from 'renderer/utils';
 function FeedPicker() {
   const dispatch = useDispatch();
 
-  const feedsObj = useSelector(
-    (state: { settings: ISettingsState }) => state.settings.feeds
-  );
   const currentFeed = useSelector(
     (state: { settings: ISettingsState }) => state.settings.currentFeed
   );
+  const feeds = useSelector(
+    (state: { settings: ISettingsState }) => state.settings.feeds
+  );
 
-  const feeds = Object.keys(feedsObj);
-  if (!feeds) return null;
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setCurrentFeed({ currentFeed: event.target.value }));
   };
   return (
@@ -34,7 +31,6 @@ function FeedPicker() {
         style={{ background: '#fefefe', padding: '20px 0', color: 'white' }}
       >
         <Form.Item
-          name="radio-group"
           style={{
             margin: 0,
             display: 'flex',
@@ -42,8 +38,8 @@ function FeedPicker() {
             padding: '0 25px',
           }}
         >
-          {feeds.length &&
-            feeds.map((feed) => (
+          {feeds &&
+            Object.keys(feeds).map((feed) => (
               <Radio
                 onChange={handleChange}
                 key={feed}

@@ -17,10 +17,6 @@ function SearchHeader() {
     (state: { settings: ISettingsState }) => state.settings.feeds[currentFeed]
   );
 
-  const { status, error } = useSelector(
-    (state: { news: INewsState }) => state.news
-  );
-
   const handleSearch = async () => {
     dispatch(clearNews());
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

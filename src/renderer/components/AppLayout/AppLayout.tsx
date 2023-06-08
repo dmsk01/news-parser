@@ -84,7 +84,7 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
                 height: 64,
               }}
             />
-            {/* {pageName === 'Settings' ? null : <SearchHeader />} */}
+            {pageName === 'Settings' ? null : <SearchHeader />}
             <Typography.Title style={{ padding: '0 24px', margin: '0' }}>
               {pageName || 'Search'} page
             </Typography.Title>

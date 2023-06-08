@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Radio, Typography } from 'antd';
+import { Form, Radio, RadioChangeEvent, Typography } from 'antd';
 import './feedPicker.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { ISettingsState, setCurrentFeed } from 'renderer/store/settingsSlice';
@@ -15,8 +15,8 @@ function FeedPicker() {
     (state: { settings: ISettingsState }) => state.settings.feeds
   );
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setCurrentFeed({ currentFeed: event.target.value }));
+  const handleChange = (e: RadioChangeEvent) => {
+    dispatch(setCurrentFeed({ currentFeed: e.target.value }));
   };
   return (
     <>
@@ -46,6 +46,7 @@ function FeedPicker() {
                 value={feed}
                 className="radio-item"
                 checked={feed === currentFeed}
+                style={{ display: 'flex' }}
               >
                 {capitalizeFirstLetter(feed)}
               </Radio>

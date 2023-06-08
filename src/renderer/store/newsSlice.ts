@@ -97,10 +97,14 @@ export const fetchNews = createAsyncThunk(
         };
 
         const newsWithDetails = await fetchNewsDetais();
-        const newsWithKeywords = newsWithDetails.filter((item) =>
-          keyWordCheck(item.details, keywords)
+        const newsWithKeywordsInDetails = newsWithDetails.filter(
+          (item) =>
+            keyWordCheck(item.details, keywords) ||
+            keyWordCheck(item.title, keywords)
         );
-        return newsWithKeywords;
+        return newsWithKeywordsInDetails.length > 0
+          ? newsWithKeywordsInDetails
+          : newsWithDetails;
       }
     } catch (error) {
       return rejectWithValue(error.message);

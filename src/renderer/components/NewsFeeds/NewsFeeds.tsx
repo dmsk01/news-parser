@@ -22,6 +22,7 @@ function NewsFeeds() {
 
   const handleSubmit = (feed: string) => {
     dispatch(addFeed({ feed }));
+    dispatch(setCurrentFeed({ currentFeed: feed }));
   };
 
   const handleChange = (value: string) => {

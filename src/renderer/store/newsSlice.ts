@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { useSelector } from 'react-redux';
 import { INews, INewsItem } from 'renderer/types/news';
 import { IFeedOption } from './settingsSlice';
 
@@ -75,12 +74,10 @@ export const fetchNews = createAsyncThunk(
         .catch(console.log);
 
       if (Array.isArray(responses)) {
-        const news = responses
-          .reduce((acc: INewsItem[], next) => {
-            acc.push(...addSourceTitleToNewsItem(next as INews));
-            return acc;
-          }, [])
-          .slice(0, 30);
+        const news = responses.reduce((acc: INewsItem[], next) => {
+          acc.push(...addSourceTitleToNewsItem(next as INews));
+          return acc;
+        }, []);
 
         const fetchNewsDetais = async () => {
           const updatedData = await Promise.all(
@@ -102,6 +99,7 @@ export const fetchNews = createAsyncThunk(
             keyWordCheck(item.details, keywords) ||
             keyWordCheck(item.title, keywords)
         );
+
         return newsWithKeywordsInDetails.length > 0
           ? newsWithKeywordsInDetails
           : newsWithDetails;

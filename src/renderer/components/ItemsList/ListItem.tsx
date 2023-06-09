@@ -1,6 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { removeSource, editSource } from 'renderer/store/settingsSlice';
 import { List, Button, Typography } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 

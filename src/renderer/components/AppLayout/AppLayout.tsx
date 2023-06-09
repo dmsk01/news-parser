@@ -91,6 +91,7 @@ const AppLayout = ({ children }: IAppLayoutProps) => {
           </Row>
         </Header>
         <Content
+          id="news-content"
           style={{
             padding: 24,
             minHeight: 280,

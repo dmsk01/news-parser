@@ -8,19 +8,15 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import axios from 'axios';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import Parser from 'rss-parser';
-import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
-const electron = require('electron');
 const fs = require('fs');
-// Importing dialog module using remote
-const { dialog } = electron;
 
 const parser = new Parser();
 
@@ -155,6 +151,7 @@ const createWindow = async () => {
     width: 1024,
     height: 728,
     icon: getAssetPath('icon.png'),
+    autoHideMenuBar: true,
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
@@ -181,16 +178,13 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

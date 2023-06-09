@@ -55,3 +55,18 @@ li {
   }
 }
 
+#news-content::-webkit-scrollbar-thumb {
+  background: rgb(0, 21, 41);
+  width: 8px;
+}
+#news-content::-webkit-scrollbar {
+  width: 8px;
+}
+#news-content::-webkit-scrollbar-track {
+  background: rgba(0, 21, 41, 0.255);
+  width: 8px;
+}
+#news-content {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}

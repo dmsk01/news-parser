@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Button, Row } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { INewsState, clearNews, fetchNews } from 'renderer/store/newsSlice';
+import { clearNews, fetchNews } from 'renderer/store/newsSlice';
 import { ISettingsState } from 'renderer/store/settingsSlice';
 import Export2Word from 'renderer/utils/saveHtmlAsDoc';
 import NewsList from '../NewsList/NewsList';

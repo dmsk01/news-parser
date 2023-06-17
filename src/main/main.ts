@@ -16,7 +16,12 @@ import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import Parser from 'rss-parser';
 import { resolveHtmlPath } from './util';
 
-const fs = require('fs');
+const puppeteer = require('puppeteer-core');
+const { executablePath } = require('puppeteer');
+
+const proxyPage = 'https://www.genmirror.com/';
+// const proxyPage = 'https://www.steganos.com/en/free-online-web-proxy';
+// https://rss.unian.net/site/news_rus.rss
 
 const parser = new Parser();
 
@@ -30,28 +35,121 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-const parseRSS = async (src: string) => {
-  const feed = await parser.parseURL(src);
-  return feed;
-};
-
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
+const findRssInString = (str: string) => {
+  const start = str.toString().indexOf('<rss');
+  const end = str.toString().indexOf('</rss>') + 6;
+  const slice = str.slice(start, end).trim();
+  return slice;
+};
+
+const getDataFromWebproxy = async (
+  src: string,
+  onPageLoadedDataSelector: string
+) => {
+  const proxy = 'https://www.croxyproxy.com/';
+  const browser = await puppeteer.launch({
+    // headless: true,
+    // args: ["--proxy-server=89.221.203.159:63928"],
+    headless: true,
+    executablePath: executablePath(),
+  });
+  const page = await browser.newPage();
+  await page.goto(proxy, { timeout: 0, waitUntil: 'domcontentloaded' });
+
+  const input = 'input[id="url"]';
+  const button = 'button[id="requestSubmit"]';
+  await page.waitForSelector(input);
+  await page.waitForSelector(button);
+  await page.type(input, src);
+  await page.click(button);
+
+  await page.waitForSelector(onPageLoadedDataSelector);
+
+  const html = await page.evaluate(
+    () => document.querySelector('*')!.outerHTML
+  );
+  browser.close();
+  return html;
+};
+
+const parseRSSFromURL = async (src: string) => {
+  let feed;
+  try {
+    feed = await parser.parseURL(src);
+    return feed;
+  } catch (error) {
+    console.log(error);
+  }
+  return feed;
+};
+
+const parseRSSFromString = async (src: string) => {
+  let feed;
+  try {
+    const htmlSlice = await getDataFromWebproxy(src, 'div.folder');
+    const rssFromHtml = findRssInString(htmlSlice);
+    feed = await parser.parseString(rssFromHtml);
+    console.log(feed.link);
+    return feed;
+  } catch (error) {
+    console.log(error);
+  }
+  return feed;
+};
+
 ipcMain.handle('get-news', async (event, searchQuery) => {
-  const result = await parseRSS(searchQuery);
+  const result = await parseRSSFromURL(searchQuery);
+  return result;
+  // let result;
+  // try {
+  //   result = await parseRSSFromURL(searchQuery);
+  // } catch (error) {
+  //   result = await parseRSSFromString(searchQuery);
+  // }
+  // return result;
+});
+
+ipcMain.handle('get-proxy-news', async (event, searchQuery) => {
+  const result = await parseRSSFromString(searchQuery);
   return result;
 });
 
 ipcMain.handle('get-details', async (event, searchQuery) => {
-  const result = await axios(searchQuery)
-    .then((response) => {
-      return response.data;
-    })
-    .catch(console.log);
+  let result;
+  try {
+    result = await axios(searchQuery)
+      .then((response) => {
+        return response.data;
+      })
+      .catch(console.log);
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+  return result;
+});
+
+ipcMain.handle('get-proxy-details', async (event, searchQuery) => {
+  let result;
+  try {
+    const htmlFromProxy = await getDataFromWebproxy(searchQuery, 'p');
+    console.log(htmlFromProxy);
+
+    result = await axios(searchQuery)
+      .then((response) => {
+        return response.data;
+      })
+      .catch(console.log);
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
   return result;
 });
 
@@ -184,7 +282,7 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line

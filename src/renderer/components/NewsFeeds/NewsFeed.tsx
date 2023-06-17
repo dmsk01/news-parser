@@ -5,12 +5,13 @@ import NewsSourcesList from '../NewsSourcesList/NewsSourcesList';
 import AddRssForm from '../AddRssForm/AddRssForm';
 import AddKeywordForm from '../AddKeywordForm/AddKeywordForm';
 import NewsKeywordList from '../NewsKeywordList/NewsKeywordList';
+import AddSourceForm from '../AddSourceForm/AddSourceForm';
 
 function FeedSources() {
   return (
     <>
       <NewsSourcesList />
-      <AddRssForm />
+      <AddSourceForm />
     </>
   );
 }
@@ -25,7 +26,6 @@ function FeedKeywords() {
 }
 
 function NewsFeed({ feeds }: { feeds: IFeeds }) {
-  if (!feeds) return null;
   return Object.keys(feeds).length ? (
     <>
       <Divider />

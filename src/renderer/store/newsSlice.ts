@@ -14,9 +14,21 @@ const getRssFromSrc = (rssSource: string) => {
     .catch(console.log);
 };
 
+const getRssFromProxy = (rssSource: string) => {
+  return window.electron.ipcRenderer
+    .invoke('get-proxy-news', rssSource)
+    .catch(console.log);
+};
+
 function getRssDetails(src: string) {
   return window.electron.ipcRenderer
     .invoke('get-details', src)
+    .catch(console.log);
+}
+
+function getRssDetailsFromProxy(src: string) {
+  return window.electron.ipcRenderer
+    .invoke('get-proxy-details', src)
     .catch(console.log);
 }
 
@@ -61,6 +73,7 @@ export const fetchNews = createAsyncThunk(
   'news/fetchNews',
   async function (action: IFeedOption, { rejectWithValue }) {
     const { sources, keywords } = action;
+    const test: Promise<unknown>[] = [];
 
     try {
       const requests: Promise<unknown>[] = [];
@@ -68,6 +81,18 @@ export const fetchNews = createAsyncThunk(
       sources.forEach((rssSource: string) => {
         requests.push(getRssFromSrc(rssSource));
       });
+
+      ['https://rss.unian.net/site/news_rus.rss'].forEach(
+        (rssSource: string) => {
+          test.push(getRssFromProxy(rssSource));
+        }
+      );
+
+      const responses2 = await Promise.all(test)
+        .then((response) => response.filter((resp) => isNewsResponse(resp)))
+        .catch(console.log);
+
+      console.log(responses2);
 
       const responses = await Promise.all(requests)
         .then((response) => response.filter((resp) => isNewsResponse(resp)))
@@ -79,9 +104,9 @@ export const fetchNews = createAsyncThunk(
           return acc;
         }, []);
 
-        const fetchNewsDetais = async () => {
+        const fetchNewsDetais = async (newsArr: INewsItem[]) => {
           const updatedData = await Promise.all(
-            news.map(async (item) => {
+            newsArr.map(async (item) => {
               if (!item.link)
                 throw new Error('Link does not exist in news item');
               const response = await getRssDetails(item.link);
@@ -93,7 +118,7 @@ export const fetchNews = createAsyncThunk(
           return updatedData;
         };
 
-        const newsWithDetails = await fetchNewsDetais();
+        const newsWithDetails = await fetchNewsDetais(news);
         const newsWithKeywordsInDetails = newsWithDetails.filter(
           (item) =>
             keyWordCheck(item.details, keywords) ||
@@ -105,6 +130,7 @@ export const fetchNews = createAsyncThunk(
           : newsWithDetails;
       }
     } catch (error) {
+      console.log('AN ERROR IN NEWS SLICE');
       return rejectWithValue(error.message);
     }
   }

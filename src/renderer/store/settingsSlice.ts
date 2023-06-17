@@ -1,7 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+export interface ISource {
+  url: string;
+  titleSelector: string;
+  paragraphSelector: string;
+}
+
 export interface IFeedOption {
-  sources: string[];
+  sources: ISource[];
   keywords: string[];
 }
 
@@ -11,9 +17,15 @@ export interface IFeeds {
 
 interface IListProps {
   item: string;
-  newValue?: string | undefined;
+  newValue?: string;
   feed: string;
   title: 'sources' | 'keywords';
+}
+
+export interface ISourceListProps {
+  item: ISource;
+  feed: string;
+  newValue?: ISource;
 }
 
 export interface ISettingsState {
@@ -42,6 +54,15 @@ const settingsSlice = createSlice({
         throw new Error('Item already exists in the list');
       } else {
         state.feeds[feed][title].push(item);
+      }
+    },
+
+    addSourceItem(state, action) {
+      const { item, feed }: ISourceListProps = action.payload;
+      if (state.feeds[feed].sources.includes(action.payload.item.url)) {
+        throw new Error('Item already exists in the list');
+      } else {
+        state.feeds[feed].sources.unshift(item);
       }
     },
     editListItem(state, action) {
@@ -75,6 +96,7 @@ export const {
   addListItem,
   editListItem,
   removeListItem,
+  addSourceItem,
   addFeed,
   setCurrentFeed,
   removeFeed,

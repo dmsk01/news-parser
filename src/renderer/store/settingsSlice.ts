@@ -89,6 +89,12 @@ const settingsSlice = createSlice({
       const { currentFeed } = action.payload;
       state.currentFeed = currentFeed;
     },
+    loadSettings(state, action) {
+      const { jsonSettings } = action.payload;
+      const { feeds, currentFeed } = jsonSettings;
+      state.currentFeed = currentFeed;
+      state.feeds = feeds;
+    },
   },
 });
 
@@ -100,6 +106,7 @@ export const {
   addFeed,
   setCurrentFeed,
   removeFeed,
+  loadSettings,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

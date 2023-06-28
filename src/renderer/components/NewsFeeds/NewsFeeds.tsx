@@ -30,7 +30,6 @@ function NewsFeeds() {
   };
   return (
     <>
-      <AddForm name="feed" label="Add feed" onSubmit={handleSubmit} />
       <Form>
         <Form.Item label="Feeds">
           <Select onChange={(value) => handleChange(value)} value={currentFeed}>
@@ -43,6 +42,7 @@ function NewsFeeds() {
           </Select>
         </Form.Item>
       </Form>
+      <AddForm name="feed" label="Add new feed" onSubmit={handleSubmit} />
       {feeds && <NewsFeed feeds={feeds} />}
     </>
   );

@@ -8,6 +8,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import fs from 'fs';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import axios from 'axios';
 import { autoUpdater } from 'electron-updater';
@@ -20,8 +21,6 @@ const puppeteer = require('puppeteer-core');
 const { executablePath } = require('puppeteer');
 
 const proxyPage = 'https://www.genmirror.com/';
-// const proxyPage = 'https://www.steganos.com/en/free-online-web-proxy';
-// https://rss.unian.net/site/news_rus.rss
 
 const parser = new Parser();
 
@@ -118,6 +117,61 @@ ipcMain.handle('get-news', async (event, searchQuery) => {
 ipcMain.handle('get-proxy-news', async (event, searchQuery) => {
   const result = await parseRSSFromString(searchQuery);
   return result;
+});
+
+ipcMain.handle('export-settings', async (event, settings) => {
+  console.log(settings);
+  dialog
+    .showSaveDialog({
+      title: 'Select the file path to save settings',
+      defaultPath: path.join(__dirname, '../assets/settings.json'),
+      buttonLabel: 'Save',
+      filters: [
+        {
+          name: 'Text Files',
+          extensions: ['json'],
+        },
+      ],
+      properties: [],
+    })
+    .then((file) => {
+      if (!file.canceled && file.filePath) {
+        fs.writeFile(file.filePath.toString(), settings, function (err) {
+          if (err) throw err;
+          console.log('Saved!');
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+ipcMain.handle('import-settings', async (event) => {
+  const jsonSettings = await dialog
+    .showOpenDialog({
+      title: 'Select the file to import settings',
+      defaultPath: path.join(__dirname, '../assets/settings.json'),
+      buttonLabel: 'Open',
+      filters: [
+        {
+          name: 'Text Files',
+          extensions: ['json'],
+        },
+      ],
+      properties: ['openFile'],
+    })
+    .then((response) => {
+      if (response.canceled) {
+        console.log('no file selected');
+      }
+      const content = fs.readFileSync(response.filePaths[0]).toString();
+      return content;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return jsonSettings;
 });
 
 ipcMain.handle('get-details', async (event, searchQuery) => {

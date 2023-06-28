@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider } from 'antd';
+import { Divider, Typography } from 'antd';
 import { IFeeds } from 'renderer/store/settingsSlice';
 import NewsSourcesList from '../NewsSourcesList/NewsSourcesList';
 import AddRssForm from '../AddRssForm/AddRssForm';
@@ -30,10 +30,12 @@ function NewsFeed({ feeds }: { feeds: IFeeds }) {
     <>
       <Divider />
       <div style={{ marginBottom: '20px' }}>
+        <Typography.Title level={4}>News sources</Typography.Title>
         <FeedSources />
       </div>
       <Divider />
       <div>
+        <Typography.Title level={4}>Search keywords</Typography.Title>
         <FeedKeywords />
       </div>
     </>

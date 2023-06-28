@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { INews, INewsItem } from 'renderer/types/news';
-import { IFeedOption } from './settingsSlice';
+import { IFeedOption, ISource } from './settingsSlice';
 
 export interface INewsState {
   news: INewsItem[];
@@ -45,9 +45,19 @@ const isNewsResponse = (sourceResponse: unknown): sourceResponse is INews => {
   );
 };
 
-function addSourceTitleToNewsItem({ items, title }: INews) {
+function addSourceInfoToNewsItem({
+  items,
+  title,
+  titleSelector,
+  paragraphSelector,
+}: INews) {
   return items.map((newsItem) => {
-    return { ...newsItem, sourceName: title };
+    return {
+      ...newsItem,
+      sourceName: title,
+      titleSelector,
+      paragraphSelector,
+    };
   });
 }
 
@@ -57,12 +67,16 @@ function keyWordCheck(text: string, keywords: string[]) {
   );
 }
 
-const extractDetailsFromHTML = (html: string) => {
+const extractDetailsFromHTML = (
+  html: string,
+  titleSelector: string,
+  paragraphSelector: string
+) => {
   let text = '';
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
-  doc.querySelectorAll('p').forEach((item) => {
-    text += item.innerText;
+  doc.querySelectorAll(paragraphSelector).forEach((item) => {
+    text += item.innerHTML;
   });
   return text;
 };
@@ -73,58 +87,44 @@ export const fetchNews = createAsyncThunk(
   'news/fetchNews',
   async function (action: IFeedOption, { rejectWithValue }) {
     const { sources, keywords } = action;
-    const test: Promise<unknown>[] = [];
-
     try {
-      const requests: Promise<unknown>[] = [];
-
-      sources.forEach((rssSource: string) => {
-        requests.push(getRssFromSrc(rssSource));
-      });
-
-      ['https://rss.unian.net/site/news_rus.rss'].forEach(
-        (rssSource: string) => {
-          test.push(getRssFromProxy(rssSource));
+      const requests = await sources.map(
+        async ({ url, titleSelector, paragraphSelector }: ISource) => {
+          const rssList = (await getRssFromSrc(url)) as object;
+          return { ...rssList, titleSelector, paragraphSelector };
         }
       );
-
-      const responses2 = await Promise.all(test)
-        .then((response) => response.filter((resp) => isNewsResponse(resp)))
-        .catch(console.log);
-
-      console.log(responses2);
 
       const responses = await Promise.all(requests)
         .then((response) => response.filter((resp) => isNewsResponse(resp)))
         .catch(console.log);
-
       if (Array.isArray(responses)) {
         const news = responses.reduce((acc: INewsItem[], next) => {
-          acc.push(...addSourceTitleToNewsItem(next as INews));
+          acc.push(...addSourceInfoToNewsItem(next as INews));
           return acc;
         }, []);
-
         const fetchNewsDetais = async (newsArr: INewsItem[]) => {
           const updatedData = await Promise.all(
             newsArr.map(async (item) => {
-              if (!item.link)
+              if (!item.link || !item.titleSelector || !item.paragraphSelector)
                 throw new Error('Link does not exist in news item');
               const response = await getRssDetails(item.link);
-              const details = extractDetailsFromHTML(response as string);
+              const details = extractDetailsFromHTML(
+                response as string,
+                item.titleSelector,
+                item.paragraphSelector
+              );
               return { ...item, details };
             })
           );
-
           return updatedData;
         };
-
         const newsWithDetails = await fetchNewsDetais(news);
         const newsWithKeywordsInDetails = newsWithDetails.filter(
           (item) =>
             keyWordCheck(item.details, keywords) ||
             keyWordCheck(item.title, keywords)
         );
-
         return newsWithKeywordsInDetails.length > 0
           ? newsWithKeywordsInDetails
           : newsWithDetails;

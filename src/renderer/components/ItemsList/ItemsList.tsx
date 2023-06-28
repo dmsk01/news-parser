@@ -33,11 +33,11 @@ function ItemsList({ title, feed }: IItemsList) {
 
   return (
     <List
-      header={
-        <Typography.Title level={3}>{`${capitalizeFirstLetter(
-          feed
-        )} ${title}`}</Typography.Title>
-      }
+      // header={
+      //   <Typography.Title level={3}>{`${capitalizeFirstLetter(
+      //     feed
+      //   )} ${title}`}</Typography.Title>
+      // }
       bordered
       size="default"
       style={{ height: '300px', overflowY: 'scroll' }}

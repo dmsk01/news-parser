@@ -76,7 +76,8 @@ const extractDetailsFromHTML = (
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
   doc.querySelectorAll(paragraphSelector).forEach((item) => {
-    text += item.innerHTML;
+    const itemText = (<HTMLElement>item).innerText;
+    text += itemText;
   });
   return text;
 };

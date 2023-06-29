@@ -7,7 +7,7 @@ function ExportSettings() {
   const dispatch = useDispatch();
 
   const settingsState = useSelector(
-    (state: { settings: ISettingsState }) => state.settings
+    (state: { settings: ISettingsState }) => state.settings.feeds
   );
 
   const handleExportSettings = () => {

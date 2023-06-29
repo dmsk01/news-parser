@@ -120,7 +120,6 @@ ipcMain.handle('get-proxy-news', async (event, searchQuery) => {
 });
 
 ipcMain.handle('export-settings', async (event, settings) => {
-  console.log(settings);
   dialog
     .showSaveDialog({
       title: 'Select the file path to save settings',

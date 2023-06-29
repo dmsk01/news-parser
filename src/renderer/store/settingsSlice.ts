@@ -91,9 +91,7 @@ const settingsSlice = createSlice({
     },
     loadSettings(state, action) {
       const { jsonSettings } = action.payload;
-      const { feeds, currentFeed } = jsonSettings;
-      state.currentFeed = currentFeed;
-      state.feeds = feeds;
+      state.feeds = jsonSettings;
     },
   },
 });

@@ -26,9 +26,15 @@ function getRssDetails(src: string) {
     .catch(console.log);
 }
 
-function getRssDetailsFromProxy(src: string) {
+function getRssDetailsFromProxy({
+  src,
+  textSelector,
+}: {
+  src: string;
+  textSelector: string;
+}) {
   return window.electron.ipcRenderer
-    .invoke('get-proxy-details', src)
+    .invoke('get-proxy-details', { src, textSelector })
     .catch(console.log);
 }
 
@@ -91,7 +97,8 @@ export const fetchNews = createAsyncThunk(
     try {
       const requests = await sources.map(
         async ({ url, titleSelector, paragraphSelector }: ISource) => {
-          const rssList = (await getRssFromSrc(url)) as object;
+          // const rssList = (await getRssFromSrc(url)) as object;
+          const rssList = (await getRssFromProxy(url)) as object;
           return { ...rssList, titleSelector, paragraphSelector };
         }
       );
@@ -109,7 +116,12 @@ export const fetchNews = createAsyncThunk(
             newsArr.map(async (item) => {
               if (!item.link || !item.titleSelector || !item.paragraphSelector)
                 throw new Error('Link does not exist in news item');
-              const response = await getRssDetails(item.link);
+              // const response = await getRssDetails(item.link);
+              const response = await getRssDetailsFromProxy({
+                src: item.link,
+                textSelector: item.paragraphSelector,
+              });
+              // console.log(response);
               const details = extractDetailsFromHTML(
                 response as string,
                 item.titleSelector,

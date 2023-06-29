@@ -17,8 +17,12 @@ import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import Parser from 'rss-parser';
 import { resolveHtmlPath } from './util';
 
-const puppeteer = require('puppeteer-core');
+// const puppeteer = require('puppeteer-core');
 const { executablePath } = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+
+puppeteer.use(StealthPlugin());
 
 const proxyPage = 'https://www.genmirror.com/';
 
@@ -53,7 +57,6 @@ const getDataFromWebproxy = async (
 ) => {
   const proxy = 'https://www.croxyproxy.com/';
   const browser = await puppeteer.launch({
-    // headless: true,
     // args: ["--proxy-server=89.221.203.159:63928"],
     headless: true,
     executablePath: executablePath(),
@@ -68,7 +71,7 @@ const getDataFromWebproxy = async (
   await page.type(input, src);
   await page.click(button);
 
-  await page.waitForSelector(onPageLoadedDataSelector);
+  await page.waitForSelector(onPageLoadedDataSelector, { timeout: 0 });
 
   const html = await page.evaluate(
     () => document.querySelector('*')!.outerHTML
@@ -94,7 +97,7 @@ const parseRSSFromString = async (src: string) => {
     const htmlSlice = await getDataFromWebproxy(src, 'div.folder');
     const rssFromHtml = findRssInString(htmlSlice);
     feed = await parser.parseString(rssFromHtml);
-    console.log(feed.link);
+    // console.log(feed.link);
     return feed;
   } catch (error) {
     console.log(error);
@@ -189,21 +192,22 @@ ipcMain.handle('get-details', async (event, searchQuery) => {
 });
 
 ipcMain.handle('get-proxy-details', async (event, searchQuery) => {
-  let result;
   try {
-    const htmlFromProxy = await getDataFromWebproxy(searchQuery, 'p');
-    console.log(htmlFromProxy);
+    const htmlFromProxy = await getDataFromWebproxy(
+      searchQuery.src,
+      searchQuery.textSelector
+    );
+    return htmlFromProxy;
 
-    result = await axios(searchQuery)
-      .then((response) => {
-        return response.data;
-      })
-      .catch(console.log);
-    return result;
+    // result = await axios(searchQuery)
+    //   .then((response) => {
+    //     return response.data;
+    //   })
+    //   .catch(console.log);
+    // return result;
   } catch (error) {
     console.log(error);
   }
-  return result;
 });
 
 // const options = {

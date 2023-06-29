@@ -1,18 +1,18 @@
 import React from 'react';
 import { Button, Space } from 'antd';
-import { useDispatch } from 'react-redux';
-import { loadSettings } from 'renderer/store/settingsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { ISettingsState, loadSettings } from 'renderer/store/settingsSlice';
 
 function ExportSettings() {
   const dispatch = useDispatch();
 
-  const handleExportSettings = () => {
-    const ls = localStorage.getItem('persist:root');
-    if (!ls) return;
-    const { settings } = JSON.parse(ls);
+  const settingsState = useSelector(
+    (state: { settings: ISettingsState }) => state.settings
+  );
 
+  const handleExportSettings = () => {
     window.electron.ipcRenderer
-      .invoke('export-settings', settings)
+      .invoke('export-settings', JSON.stringify(settingsState))
       .catch(console.log);
   };
 

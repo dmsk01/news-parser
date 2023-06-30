@@ -30,7 +30,7 @@ function ExportSettings() {
   return (
     <Space size={10}>
       <Button onClick={handleExportSettings} type="primary" htmlType="button">
-        Export settings
+        Export feeds
       </Button>
       <Button
         onClick={handleImportSettings}
@@ -38,7 +38,7 @@ function ExportSettings() {
         type="primary"
         htmlType="button"
       >
-        Import settings
+        Import feeds
       </Button>
     </Space>
   );

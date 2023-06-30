@@ -31,6 +31,7 @@ export interface ISourceListProps {
 export interface ISettingsState {
   feeds: IFeeds;
   currentFeed: string;
+  timeBreakpoints: any[];
 }
 
 const initialState = {
@@ -41,6 +42,7 @@ const initialState = {
     },
   },
   currentFeed: 'Default',
+  timeBreakpoints: [],
 } as ISettingsState;
 
 const settingsSlice = createSlice({
@@ -93,6 +95,17 @@ const settingsSlice = createSlice({
       const { jsonSettings } = action.payload;
       state.feeds = jsonSettings;
     },
+    addTimeBreak(state, action) {
+      state.timeBreakpoints.push(action.payload.time);
+    },
+    removeTimeBreak(state, action) {
+      state.timeBreakpoints = state.timeBreakpoints.filter(
+        (time) => time !== action.payload.time
+      );
+    },
+    clearTimeBreaks(state) {
+      state.timeBreakpoints = [];
+    },
   },
 });
 
@@ -105,6 +118,8 @@ export const {
   setCurrentFeed,
   removeFeed,
   loadSettings,
+  addTimeBreak,
+  clearTimeBreaks,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

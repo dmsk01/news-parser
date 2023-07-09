@@ -9,12 +9,21 @@
  */
 import path from 'path';
 import fs from 'fs';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  dialog,
+  ipcRenderer,
+} from 'electron';
 import axios from 'axios';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import installExtension, { REDUX_DEVTOOLS } from 'electron-devtools-installer';
 import Parser from 'rss-parser';
+import { Cluster } from 'puppeteer-cluster';
+import { INewsItem } from 'renderer/types/news';
 import { resolveHtmlPath } from './util';
 
 // const puppeteer = require('puppeteer-core');
@@ -23,8 +32,6 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 puppeteer.use(StealthPlugin());
-
-const proxyPage = 'https://www.genmirror.com/';
 
 const parser = new Parser();
 
@@ -56,16 +63,16 @@ const getDataFromWebproxy = async (
   onPageLoadedDataSelector: string
 ) => {
   const proxy = 'https://www.croxyproxy.com/';
+  const input = 'input[id="url"]';
+  const button = 'button[id="requestSubmit"]';
   const browser = await puppeteer.launch({
     // args: ["--proxy-server=89.221.203.159:63928"],
-    headless: true,
+    headless: false,
     executablePath: executablePath(),
   });
   const page = await browser.newPage();
   await page.goto(proxy, { timeout: 0, waitUntil: 'domcontentloaded' });
 
-  const input = 'input[id="url"]';
-  const button = 'button[id="requestSubmit"]';
   await page.waitForSelector(input);
   await page.waitForSelector(button);
   await page.type(input, src);
@@ -97,10 +104,9 @@ const parseRSSFromString = async (src: string) => {
     const htmlSlice = await getDataFromWebproxy(src, 'div.folder');
     const rssFromHtml = findRssInString(htmlSlice);
     feed = await parser.parseString(rssFromHtml);
-    // console.log(feed.link);
     return feed;
   } catch (error) {
-    console.log(error);
+    console.log('[parseRSSFromString] function in main process failed ', error);
   }
   return feed;
 };
@@ -198,70 +204,56 @@ ipcMain.handle('get-proxy-details', async (event, searchQuery) => {
       searchQuery.textSelector
     );
     return htmlFromProxy;
-
-    // result = await axios(searchQuery)
-    //   .then((response) => {
-    //     return response.data;
-    //   })
-    //   .catch(console.log);
-    // return result;
   } catch (error) {
     console.log(error);
   }
 });
 
-// const options = {
-//   silent: false,
-//   printBackground: true,
-//   color: false,
-//   // margin: {
-//   //   marginType: 'printableArea',
-//   // },
-//   landscape: false,
-//   // pagesPerSheet: 1,
-//   collate: false,
-//   copies: 1,
-//   pageSize: 'A4',
-// };
+ipcMain.handle(
+  'get-proxy-details-cuncurently',
+  async (event, newsArr: INewsItem[]) => {
+    const result: INewsItem[] = [];
+    const cluster = await Cluster.launch({
+      concurrency: Cluster.CONCURRENCY_PAGE,
+      maxConcurrency: 5,
+      puppeteerOptions: {
+        headless: false,
+        executablePath: executablePath(),
+      },
+    });
 
-// ipcMain.on('print-news', async (event, htmlString) => {
-//   dialog
-//     .showSaveDialog({
-//       title: 'Select the File Path to save',
-//       defaultPath: path.join(__dirname, '../assets/sample.doc'),
-//       buttonLabel: 'Save',
-//       filters: [
-//         {
-//           name: 'Text Files',
-//           extensions: ['txt', 'doc'],
-//         },
-//       ],
-//       properties: [],
-//     })
-//     .then((file) => {
-//       if (!file.canceled && file.filePath) {
-//         fs.writeFile(
-//           file.filePath.toString(),
-//           htmlString[0],
-//           function (err: Error) {
-//             if (err) throw err;
-//             console.log('Saved!');
-//           }
-//         );
-//       }
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
+    await cluster.task(async ({ page, data: newsItem }) => {
+      const proxy = 'https://www.croxyproxy.com/';
+      const input = 'input[id="url"]';
+      const button = 'button[id="requestSubmit"]';
+      await page.goto(proxy, { timeout: 0, waitUntil: 'domcontentloaded' });
 
-//   // const win = BrowserWindow.getFocusedWindow();
-//   // if (!mainWindow) return;
-//   // mainWindow.webContents.print(options, (success, failureReason) => {
-//   //   if (!success) console.log(failureReason);
-//   //   console.log('Print Initiated');
-//   // });
-//   console.log('inside main handler');
-// });
+      await page.waitForSelector(input);
+      await page.waitForSelector(button);
+      await page.type(input, newsItem.link);
+      await page.click(button);
+
+      await page.waitForSelector(newsItem.paragraphSelector, { timeout: 0 });
+
+      const html = await page.evaluate(
+        () => document.querySelector('*')!.outerHTML
+      );
+      return result.push({ ...newsItem, html });
+    });
+
+    newsArr.forEach((item) => {
+      cluster.queue(item);
+    });
+
+    cluster.on('taskerror', (err, data) => {
+      console.log(`Error crawling ${data}: ${err.message}`);
+    });
+
+    await cluster.idle();
+    await cluster.close();
+    return result;
+  }
+);
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

@@ -6,6 +6,7 @@ export interface INewsItem {
   id: string;
   link?: string;
   details?: string;
+  html?: string;
   titleSelector?: string;
   paragraphSelector?: string;
 }

@@ -92,6 +92,7 @@
     "electron-log": "^4.4.7",
     "electron-updater": "^5.0.1",
     "puppeteer": "^20.6.0",
+    "puppeteer-cluster": "^0.23.0",
     "puppeteer-core": "^20.6.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",

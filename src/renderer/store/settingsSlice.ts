@@ -103,6 +103,11 @@ const settingsSlice = createSlice({
         (time) => time !== action.payload.time
       );
     },
+    editTimeBreak(state, action) {
+      const { item, newValue } = action.payload;
+      const itemIndex = state.timeBreakpoints.findIndex((i) => i === item);
+      if (itemIndex >= 0) state.timeBreakpoints.splice(itemIndex, 1, newValue);
+    },
     clearTimeBreaks(state) {
       state.timeBreakpoints = [];
     },
@@ -119,6 +124,8 @@ export const {
   removeFeed,
   loadSettings,
   addTimeBreak,
+  removeTimeBreak,
+  editTimeBreak,
   clearTimeBreaks,
 } = settingsSlice.actions;
 

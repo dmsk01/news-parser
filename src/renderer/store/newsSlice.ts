@@ -41,7 +41,7 @@ function getRssDetailsFromProxy({
     .invoke('get-proxy-details', { src, textSelector })
     .catch(console.log);
 }
-function getRssDetailsFromProxyCuncurently(newsArr: INewsItem[]): INewsItem[] {
+function getRssDetailsFromProxyCuncurently(newsArr: INewsItem[]) {
   return window.electron.ipcRenderer
     .invoke('get-proxy-details-cuncurently', newsArr)
     .catch(console.log);
@@ -100,7 +100,9 @@ const extractDetailsFromHTML = (
 
 const fetchNewsDetais = async (newsArr: INewsItem[]) => {
   const start = Date.now();
-  const newsWithHtml = await getRssDetailsFromProxyCuncurently(newsArr);
+  const newsWithHtml = (await getRssDetailsFromProxyCuncurently(
+    newsArr
+  )) as INewsItem[];
   const timeTaken = Date.now() - start;
   console.log(`Total time taken : ${timeTaken / 1000 / 60} minutes`);
   const newsWithDetailInfo = newsWithHtml.map((item) => {
@@ -153,10 +155,12 @@ export const fetchNews = createAsyncThunk(
         .catch(console.log);
 
       if (Array.isArray(responses)) {
-        const news = responses.reduce((acc: INewsItem[], next) => {
-          acc.push(...addSourceInfoToNewsItem(next as INews));
-          return acc;
-        }, []);
+        const news = responses
+          .reduce((acc: INewsItem[], next) => {
+            acc.push(...addSourceInfoToNewsItem(next as INews));
+            return acc;
+          }, [])
+          .slice(0, 10);
 
         const newsWithDetails = await fetchNewsDetais(news);
         const newsWithKeywordsInDetails = newsWithDetails.filter(
@@ -172,6 +176,7 @@ export const fetchNews = createAsyncThunk(
       console.log('AN ERROR IN NEWS SLICE');
       return rejectWithValue(error.message);
     }
+    return null;
   }
 );
 
@@ -190,15 +195,15 @@ const newsSlice = createSlice({
     },
   },
   extraReducers: {
-    [fetchNews.pending]: (state) => {
+    [fetchNews.pending.toString()]: (state) => {
       state.status = 'loading';
       state.error = null;
     },
-    [fetchNews.rejected]: (state, action) => {
+    [fetchNews.rejected.toString()]: (state, action) => {
       state.status = 'rejected';
       state.error = action.payload;
     },
-    [fetchNews.fulfilled]: (state, action) => {
+    [fetchNews.fulfilled.toString()]: (state, action) => {
       state.status = 'resolved';
       state.news = action.payload;
     },

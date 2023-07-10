@@ -9,14 +9,7 @@
  */
 import path from 'path';
 import fs from 'fs';
-import {
-  app,
-  BrowserWindow,
-  shell,
-  ipcMain,
-  dialog,
-  ipcRenderer,
-} from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import axios from 'axios';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -205,7 +198,7 @@ ipcMain.handle('get-proxy-details', async (event, searchQuery) => {
     );
     return htmlFromProxy;
   } catch (error) {
-    console.log(error);
+    return console.log(error);
   }
 });
 

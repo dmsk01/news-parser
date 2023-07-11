@@ -160,7 +160,7 @@ export const fetchNews = createAsyncThunk(
             acc.push(...addSourceInfoToNewsItem(next as INews));
             return acc;
           }, [])
-          .slice(0, 10);
+          .slice(0, 11);
 
         const newsWithDetails = await fetchNewsDetais(news);
         const newsWithKeywordsInDetails = newsWithDetails.filter(
